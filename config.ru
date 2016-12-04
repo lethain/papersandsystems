@@ -3,5 +3,5 @@ require 'bundler'
 
 Bundler.require
 
-require './my_sinatra_app'
-run MySinatraApp
+require './papers'
+run Sinatra::Application
