@@ -1,4 +1,21 @@
 /* Stub for Papers CSS */
-html {
-
+nav {
+    margin-bottom: 15px;
 }
+
+nav.navbar .nav-item.nav-link.float-xs-right {
+    margin-right: 1.5rem;
+}
+
+
+#filters label {
+    padding-left: .5rem;
+    padding-bottom: .25rem;
+}
+
+#filters .form-group {
+    background: #373a3c;
+    color: #fff;    
+    padding-top: .75rem;
+}
+    

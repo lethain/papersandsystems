@@ -12,6 +12,20 @@
     <title><%= title %></title>
   </head>
   <body>
+    <nav class="navbar navbar-dark bg-inverse">
+      <div class="container">
+	<div class="nav navbar-nav">
+	  <a class="navbar-brand" href="#">
+	    <img src="/static/img/papers-logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+	    Papers
+	  </a>
+	  <a class="nav-item nav-link float-xs-right" href="#">Log In</a>
+	  <a class="nav-item nav-link float-xs-right" href="#">Suggest Paper</a>	  
+	  <a class="nav-item nav-link float-xs-right" href="#">Updates</a>
+	  <a class="nav-item nav-link float-xs-right" href="#">Papers</a>	  
+	</div>
+      </div>
+    </nav>
     <%= yield %>
     <script src="/static/css/jquery-3.1.1.min.js"></script>
     <script src="/static/css/tether-1.3.7.min.js"></script>
