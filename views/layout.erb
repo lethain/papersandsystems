@@ -20,9 +20,14 @@
 	    <img src="/static/img/papers-logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
 	    Papers
 	  </a>
-	  <a class="nav-item nav-link float-xs-right" href="#">Log In</a>
-	  <a class="nav-item nav-link float-xs-right" href="#">Suggest Paper</a>
-	  <a class="nav-item nav-link float-xs-right" href="#">Updates</a>
+	  <% if user %>
+	  <a class="nav-item nav-link float-xs-right" href="#"><%= user[:email] %></a>
+
+	  <% else %>
+	  <a class="nav-item nav-link float-xs-right" href="https://github.com/login/oauth/authorize?scope=user:email&client_id=<%= client_id %>">Login</a>
+
+	  <% end %>
+	  <a class="nav-item nav-link float-xs-right" href="#">Problems</a>
 	  <a class="nav-item nav-link float-xs-right" href="#">Papers</a>
 	</div>
       </div>
