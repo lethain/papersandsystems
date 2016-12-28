@@ -30,8 +30,10 @@ get '/' do
 end
 
     
-
-# {"error"=>"bad_verification_code", "error_description"=>"The code passed is incorrect or expired.", "error_uri"=>"https://developer.github.com/v3/oauth/#bad-verification-code"}
+get '/health' do
+  status 200
+  body 'Papers are OK'
+end
 
 get '/callback' do
   session_code = request.env['rack.request.query_hash']['code']
