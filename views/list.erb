@@ -40,15 +40,17 @@
 	<tr>
 	  <th>#</th>
 	  <th>Name</th>
-	  <th>Difficulty</th>
+	  <th>Status</th>
 	</tr>
       </thead>
       <tbody>
+	<% papers.each do |paper| %>
 	<tr>
-	  <th scope="row">1</th>
-	  <td><a href="https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0ahUKEwiKp9K_0dvQAhXCjVQKHWc6B04QFggaMAA&url=http%3A%2F%2Fs3.amazonaws.com%2FAllThingsDistributed%2Fsosp%2Famazon-dynamo-sosp2007.pdf&usg=AFQjCNEpBjuspsc5JvGcLtzw39GGRN-chA&sig2=dJhx8VvETQozCiz6wRk0bA&bvm=bv.139782543,d.cGw">Dynamo: Amazon's Highly Available Key Value Store</a> </td>
-	  <td>Easy</td>
+	  <th scope="row"><%= paper['num'] %></th>
+	  <td><a href="<%= paper[:link] %>"><%= paper[:name] %></a></td>
+	  <td>New</td>
 	</tr>
+	<% end %>
       </tbody>
     </table>
   </div>
