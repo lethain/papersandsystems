@@ -1,9 +1,10 @@
 CREATE DATABASE IF NOT EXISTS papers;
 USE papers;
-CREATE TABLE IF NOT EXISTS problems(
+CREATE TABLE IF NOT EXISTS user_systems(
        id INT(11) NOT NULL AUTO_INCREMENT,
-       name VARCHAR(255),
-       template VARCHAR(60),
+       user_id INT(11),
+       system_id INT(11),
        ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-       PRIMARY KEY (id)
+       PRIMARY KEY (id),
+       UNIQUE (user_id, system_id)
 ) engine=InnoDB

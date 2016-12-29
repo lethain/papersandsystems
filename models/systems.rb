@@ -4,7 +4,7 @@ require './utils'
 
 class Systems < PASModel
   def initialize(mysql)
-    super(mysql, 'problems')
+    super(mysql, 'systems')
   end
   
   def list

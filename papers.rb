@@ -28,9 +28,9 @@ def common_vars(m, title)
     :client_id => CLIENT_ID,
     :access_token => access_token,
     :user_paper_count => 0,
-    :user_problem_count => 0,
+    :user_system_count => 0,
     :paper_count => 5,
-    :problem_count => 4
+    :system_count => 4
   }
 end
 
