@@ -21,11 +21,8 @@
 	    Systems &amp; Papers
 	  </a>
 	  <% if user %>
-	  <% if user['admin'] %>
-	  <a class="nav-item nav-link float-xs-right" href="#"><span class="tag tag-success">Admin</span></a>
-	  <% end %>
-	  
 	  <a class="nav-item nav-link float-xs-right" href="https://github.com/settings/applications">Logged in as <%= user['login'] %></a>
+	  <a class="btn btn-outline-secondary nav-item nav-link float-xs-right" href="/about/">About</a>
 	  <a class="btn btn-outline-secondary nav-item nav-link float-xs-right" href="/papers/">Papers
 	    <span class="tag"><%= user_paper_count %> / <%= paper_count %></span>
 	  </a>
@@ -34,12 +31,30 @@
 	  </a>
 	  <% else %>
 	  <a id="login" class="btn btn-primary nav-item nav-link float-xs-right" href="https://github.com/login/oauth/authorize?scope=user:email&client_id=<%= client_id %>">Login via Github</a>
+	  <a class="btn btn-outline-secondary nav-item nav-link float-xs-right" href="/about/">About</a>
 	  <a class="btn btn-outline-secondary nav-item nav-link float-xs-right" href="/papers/">Papers</a>
 	  <a class="btn btn-outline-secondary nav-item nav-link float-xs-right" href="/">Systems</a>
 	  <% end %>
 	</div>
       </div>
     </nav>
+
+    <% if user and user['is_admin'] == 1 %>
+    <div class="container">
+      <div class="col-sm-12">
+	<div class="card card-inverse card-primary card-block">
+	  <h4 class="card-title">Admin Panel</h4>
+	  <p class="card-text">
+	    <a class="btn btn-secondary" href="#">Add paper.</a>
+	    <a class="btn btn-secondary" href="#">Associate paper.</a>
+	    <a class="btn btn-secondary" href="#">List users.</a>
+	    <a class="btn btn-secondary" href="#">Recent activity.</a>
+	  </p>
+	</div>
+      </div>
+    </div>
+    <% end %>
+
     <%= yield %>
     <script src="/static/css/jquery-3.1.1.min.js"></script>
     <script src="/static/css/tether-1.3.7.min.js"></script>
