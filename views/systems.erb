@@ -1,4 +1,3 @@
-
 <div class="container">
   <div class="col-sm-2">
     <form id="filters" class="form">
@@ -10,6 +9,7 @@
 	  <option>Completed</option>
 	</select>
       </div>
+
     </form>
   </div>
 
@@ -19,16 +19,16 @@
 	<tr>
 	  <th>#</th>
 	  <th>Name</th>
-	  <th>Read</th>
+	  <th>Solved By</th>	  
 	  <th>Status</th>
 	</tr>
       </thead>
       <tbody>
-	<% papers.each do |paper| %>
+	<% systems.each do |system| %>
 	<tr>
-	  <th scope="row"><%= paper['id'] %></th>
-	  <td><a href="<%= paper['link'] %>"><%= paper['name'] %></a></td>
-	  <td>0 times</td>
+	  <th scope="row"><%= system['id'] %></th>
+	  <td><a href="#"><%= system['name'] %></td>
+	  <td>0 times</td>	  
 	  <td>New</td>
 	</tr>
 	<% end %>

@@ -41,7 +41,7 @@ end
 get '/' do
   m = get_mysql
   cv = common_vars(m, "Systems")
-  cv[:papers] = Systems.new(m).list
+  cv[:systems] = Systems.new(m).list
   erb :systems, :locals => cv
 end
 
