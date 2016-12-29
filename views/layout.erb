@@ -18,17 +18,29 @@
 	<div class="nav navbar-nav">
 	  <a class="navbar-brand" href="#">
 	    <img src="/static/img/papers-logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
-	    Papers
+	    Systems &amp; Papers
 	  </a>
 	  <% if user %>
-	  <a class="nav-item nav-link float-xs-right" href="#"><%= user['email'] %></a>
-
-	  <% else %>
-	  <a class="nav-item nav-link float-xs-right" href="https://github.com/login/oauth/authorize?scope=user:email&client_id=<%= client_id %>">Login</a>
-
+	  <% if user['admin'] %>
+	  <a class="nav-item nav-link float-xs-right" href="#"><span class="tag tag-success">Admin</span></a>
 	  <% end %>
-	  <a class="nav-item nav-link float-xs-right" href="#">Problems</a>
-	  <a class="nav-item nav-link float-xs-right" href="#">Papers</a>
+	  
+	  <a class="nav-item nav-link float-xs-right" href="https://github.com/settings/applications">Logged in as <%= user['login'] %></a>
+	  <a class="nav-item nav-link float-xs-right" href="/papers/">Papers
+	    <span class="tag tag-default"><%= user_paper_count %> / <%= paper_count %></span>
+	  </a>
+	  <a class="nav-item nav-link float-xs-right" href="/">Systems
+	    <span class="tag tag-default"><%= user_problem_count %> / <%= problem_count %></span>
+	  </a>
+	  <% else %>
+	  <a id="login" class="btn btn-primary nav-item nav-link float-xs-right" href="https://github.com/login/oauth/authorize?scope=user:email&client_id=<%= client_id %>">Login via Github</a>
+	  <a class="nav-item nav-link float-xs-right" href="/papers/">Papers
+	    <span class="tag tag-default"><%= paper_count %></span>
+	  </a>
+	  <a class="nav-item nav-link float-xs-right" href="/">Systems
+	    <span class="tag tag-default"><%= problem_count %></span>
+	  </a>
+	  <% end %>
 	</div>
       </div>
     </nav>

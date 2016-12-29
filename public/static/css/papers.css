@@ -7,11 +7,15 @@ nav.navbar .nav-item.nav-link.float-xs-right {
     margin-right: 1.5rem;
 }
 
-
 #filters label {
     padding-left: .5rem;
     padding-bottom: .25rem;
 }
+
+#login {
+    color: #fff;
+}
+
 
 #filters .form-group {
     background: #373a3c;

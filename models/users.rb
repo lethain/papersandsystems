@@ -2,19 +2,9 @@ require 'mysql2'
 require './utils'
 
 
-class Users
+class Users < PASModel
   def initialize(mysql)
-    @table = 'users'
-    @m = mysql
-    @log = get_logger
-  end
-
-  def escape(val)
-    if val.is_a? Integer
-      val
-    else
-      @m.escape(val)
-    end
+    super(mysql, 'users')
   end
 
   def create(access_token, user, emails)
@@ -36,12 +26,10 @@ class Users
       existing = self.get_by_id(id)
       if existing
         sql = "UPDATE #{@table} SET access_token='#{access_token}', login='#{login}', avatar='#{avatar}', email='#{email}' WHERE id=#{id}"
-        results = @m.query(sql)
-        @log.info("update: '#{sql}', #{results.to_a}")
+        results = self.run(sql)
       else
         sql = "INSERT INTO #{@table} (id, access_token, login, avatar, email) VALUES ('#{id}', '#{access_token}', '#{login}', '#{avatar}', '#{login}')"
-        results = @m.query(sql)
-        @log.info("create: '#{sql}', #{results.to_a}")
+        results = self.run(sql)
       end
     end
     return results, success
@@ -49,27 +37,22 @@ class Users
 
   def list
     sql = "SELECT * FROM #{@table} ORDER BY id"
-    results = @m.query(sql)
-    @log.info("list: '#{sql}', #{results}")
-    results
+    self.run(sql)
   end
 
   def get_by_id(id)
     id = self.escape(id)
     sql = "SELECT * FROM #{@table} WHERE id=#{id} LIMIT 1"
-    results = @m.query(sql)
-    @log.info("get_by_id: '#{sql}', #{results.to_a}")
-    results.size > 0 ? results.first : nil    
+    results = self.run(sql)
+    results.size > 0 ? results.first : nil
   end
 
   def get_by_token(access_token)
     if access_token
       access_token = self.escape(access_token)
       sql = "SELECT * FROM #{@table} WHERE access_token='#{access_token}' LIMIT 1"
-      results = @m.query(sql)
-      @log.info("get_by_token: '#{sql}', #{results.to_a}")
+      results = self.run(sql)
       results.size > 0 ? results.first : nil
     end
   end
-
 end
