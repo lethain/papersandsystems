@@ -3,12 +3,17 @@ require 'mongo'
 require 'json'
 require './models/users'
 require './models/papers'
-
-set :erb, :format => :html5
-use Rack::Session::Pool #, :cookie_only => false
+require 'dalli'
+require 'rack/session/dalli'
 
 CLIENT_ID = ENV['GH_BASIC_CLIENT_ID']
 CLIENT_SECRET = ENV['GH_BASIC_SECRET_ID']
+
+configure do
+  set :erb, :format => :html5
+  use Rack::Session::Dalli, cache: Dalli::Client.new('127.0.0.1:11211')
+end
+
 
 def get_mysql
   @m = Mysql2::Client.new(:host => "localhost", :username => "root", :database => "papers")

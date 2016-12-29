@@ -4,6 +4,7 @@ GEM
     Ascii85 (1.0.2)
     afm (0.2.2)
     bson (4.2.0)
+    dalli (2.7.6)
     domain_name (0.5.20161129)
       unf (>= 0.0.5, < 1.0.0)
     hashery (2.1.2)
@@ -44,6 +45,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  dalli
   mongo
   mysql2
   pdf-reader
