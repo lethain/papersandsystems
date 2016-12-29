@@ -33,7 +33,7 @@ class Users
     success = email != nil
     results = nil
     if success
-      existing = self.get_by_id(id).size == 1
+      existing = self.get_by_id(id)
       if existing
         sql = "UPDATE #{@table} SET access_token='#{access_token}', login='#{login}', avatar='#{avatar}', email='#{email}' WHERE id=#{id}"
         results = @m.query(sql)
@@ -56,19 +56,19 @@ class Users
 
   def get_by_id(id)
     id = self.escape(id)
-    sql = "SELECT * FROM #{@table} WHERE id=#{id}"
+    sql = "SELECT * FROM #{@table} WHERE id=#{id} LIMIT 1"
     results = @m.query(sql)
     @log.info("get_by_id: '#{sql}', #{results.to_a}")
-    results
+    results.size > 0 ? results.first : nil    
   end
 
   def get_by_token(access_token)
     if access_token
       access_token = self.escape(access_token)
-      sql = "SELECT * FROM #{@table} WHERE access_token='#{access_token}'"
+      sql = "SELECT * FROM #{@table} WHERE access_token='#{access_token}' LIMIT 1"
       results = @m.query(sql)
       @log.info("get_by_token: '#{sql}', #{results.to_a}")
-      results
+      results.size > 0 ? results.first : nil
     end
   end
 

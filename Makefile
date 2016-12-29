@@ -4,5 +4,8 @@ run:
 mysql:
 	mysql.server start
 
+memcached:
+	/usr/local/opt/memcached/bin/memcached
+
 mongo:
 	mongod --config /usr/local/etc/mongod.conf
