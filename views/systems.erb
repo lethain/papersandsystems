@@ -1,19 +1,32 @@
+<% if not user %>
 <div class="container">
-  <div class="col-sm-2">
-    <form id="filters" class="form">
-      <div class="form-group">
-	<label for="difficulty">Status</label>
-	<select class="form-control" id="status" name="status">
-	  <option>All</option>
-	  <option>New</option>
-	  <option>Completed</option>
-	</select>
-      </div>
+  <div class="col-sm-12">
+    <div class="card card-block">
+      <h4 class="card-title">Welcome to Systems &amp; Papers!</h4>
+      <p class="card-text">
+	One of my favorite things to do when joining a new team of engineers is
+	to start a <a href="http://lethain.com/hosting-paper-reading-group/">paper reading group</a>,
+	with the goal of getting to know a bit more about systems and computer science.
+	For some time now, I've been thinking about how to combine the learning from paper reading groups
+	with the joy of <a href="https://projecteuler.net/">learning math in Project Euler</a>, making a
+	fun, interesting way to learn more about systems in software engineering.
+      </p>
+      <p class="card-text">
+	<a href="/">Papers &amp; Systems</a> is an attempt to scratch that itch. Learn more, including
+	how to send feedback, on the <a href="/about/">About</a> page.
+      </p>
 
-    </form>
+      <p class="card-text">
+	In the mean time, please have fun
+	reading the <a href="/papers/">papers</a> and taking a stab at building some of the <a href="/systems/">systems</a>.
+      </p>
+    </div>
   </div>
+</div>
+<% end %>
 
-  <div class="col-sm-10">
+<div class="container">
+  <div class="col-sm-12">
     <table class="table">
       <thead class="thead-inverse">
 	<tr>

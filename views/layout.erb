@@ -26,20 +26,16 @@
 	  <% end %>
 	  
 	  <a class="nav-item nav-link float-xs-right" href="https://github.com/settings/applications">Logged in as <%= user['login'] %></a>
-	  <a class="nav-item nav-link float-xs-right" href="/papers/">Papers
-	    <span class="tag tag-default"><%= user_paper_count %> / <%= paper_count %></span>
+	  <a class="btn btn-outline-secondary nav-item nav-link float-xs-right" href="/papers/">Papers
+	    <span class="tag"><%= user_paper_count %> / <%= paper_count %></span>
 	  </a>
-	  <a class="nav-item nav-link float-xs-right" href="/">Systems
-	    <span class="tag tag-default"><%= user_problem_count %> / <%= problem_count %></span>
+	  <a class="btn btn-outline-secondary nav-item nav-link float-xs-right" href="/">Systems
+	    <span class="tag"><%= user_problem_count %> / <%= problem_count %></span>
 	  </a>
 	  <% else %>
 	  <a id="login" class="btn btn-primary nav-item nav-link float-xs-right" href="https://github.com/login/oauth/authorize?scope=user:email&client_id=<%= client_id %>">Login via Github</a>
-	  <a class="nav-item nav-link float-xs-right" href="/papers/">Papers
-	    <span class="tag tag-default"><%= paper_count %></span>
-	  </a>
-	  <a class="nav-item nav-link float-xs-right" href="/">Systems
-	    <span class="tag tag-default"><%= problem_count %></span>
-	  </a>
+	  <a class="btn btn-outline-secondary nav-item nav-link float-xs-right" href="/papers/">Papers</a>
+	  <a class="btn btn-outline-secondary nav-item nav-link float-xs-right" href="/">Systems</a>
 	  <% end %>
 	</div>
       </div>

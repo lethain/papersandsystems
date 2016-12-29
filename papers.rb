@@ -49,7 +49,7 @@ get '/papers/' do
   m = get_mysql
   cv = common_vars(m, "Papers")
   cv[:papers] = Papers.new(m).list
-  erb :list, :locals => cv
+  erb :papers, :locals => cv
 end
 
 # should only allow this if you're an admin
