@@ -46,8 +46,8 @@
       <tbody>
 	<% papers.each do |paper| %>
 	<tr>
-	  <th scope="row"><%= paper['num'] %></th>
-	  <td><a href="<%= paper[:link] %>"><%= paper[:name] %></a></td>
+	  <th scope="row"><%= paper['id'] %></th>
+	  <td><a href="<%= paper['link'] %>"><%= paper['name'] %></a></td>
 	  <td>New</td>
 	</tr>
 	<% end %>

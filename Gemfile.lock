@@ -14,6 +14,7 @@ GEM
     mime-types-data (3.2016.0521)
     mongo (2.4.0)
       bson (~> 4.2.0)
+    mysql2 (0.4.5)
     netrc (0.11.0)
     pdf-reader (1.4.0)
       Ascii85 (~> 1.0.0)
@@ -44,6 +45,7 @@ PLATFORMS
 
 DEPENDENCIES
   mongo
+  mysql2
   pdf-reader
   rest-client
   sinatra

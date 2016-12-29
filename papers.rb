@@ -1,35 +1,41 @@
 require 'sinatra'
 require 'mongo'
 require 'json'
-require './user'
+require './models/users'
+require './models/papers'
 
 set :erb, :format => :html5
-use Rack::Session::Pool, :cookie_only => false
-
+use Rack::Session::Pool #, :cookie_only => false
 
 CLIENT_ID = ENV['GH_BASIC_CLIENT_ID']
 CLIENT_SECRET = ENV['GH_BASIC_SECRET_ID']
+
+def get_mysql
+  @m = Mysql2::Client.new(:host => "localhost", :username => "root", :database => "papers")
+
+end
+
+def common_vars(m, title)
+  access_token = authenticated?
+  {
+    :title => title,
+    :user => Users.new(m).get_by_token(access_token),
+    :client_id => CLIENT_ID,
+    :access_token => access_token
+  }
+end
 
 def authenticated?
   session[:access_token]
 end
 
-def papers
-  client = Mongo::Client.new('mongodb://127.0.0.1:27017/papers')
-  db = client.database
-  client[:papers]
-end
-
 get '/' do
-  access_token = authenticated?
-  user = get_user(access_token)
-
-  p = papers
-  res = p.find.sort(:num => 1)
-  erb :list, :locals => {:title => "Papers", :papers => res, :client_id => CLIENT_ID, :user => user}
+  m = get_mysql
+  cv = common_vars(m, "Papers")
+  cv[:papers] = Papers.new(m).list
+  erb :list, :locals => cv
 end
 
-    
 get '/health' do
   status 200
   body 'Papers are OK'
@@ -53,7 +59,8 @@ get '/callback' do
                                    {:params => {:access_token => access_token}}))
   emails = JSON.parse(RestClient.get('https://api.github.com/user/emails',
                                      {:params => {:access_token => access_token}}))
-  info, success = create_user(access_token, user, emails)
+
+  info, success = Users.new(get_mysql).create(access_token, user, emails)
   if success
     session[:access_token] = parsed['access_token']
     redirect '/'
@@ -62,22 +69,14 @@ get '/callback' do
   end
 end
 
+# should only allow this if you're an admin
 get '/paper/' do
-  erb :add, :locals => {:title => "Add Paper"}
-end
-
-def standard(s)
-  s.gsub(/\W+/, ' ').strip
+  m = get_mysql
+  cv = common_vars(m, "Add Paper")
+  erb :add, :locals => cv
 end
 
 post '/paper/' do
-  p = papers
-  doc = { name: params['name'],
-          link: params['link'],
-          desc: params['description']
-        }
-  doc.each { |k,v| doc[k] = standard(v) }
-  doc[:num] = p.count + 1
-  result = p.insert_one(doc)
+  Papers.new(get_mysql).create(params['name'], params['link'], params['description'])
   redirect '/'
 end

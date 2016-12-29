@@ -21,7 +21,7 @@
 	    Papers
 	  </a>
 	  <% if user %>
-	  <a class="nav-item nav-link float-xs-right" href="#"><%= user[:email] %></a>
+	  <a class="nav-item nav-link float-xs-right" href="#"><%= user['email'] %></a>
 
 	  <% else %>
 	  <a class="nav-item nav-link float-xs-right" href="https://github.com/login/oauth/authorize?scope=user:email&client_id=<%= client_id %>">Login</a>
