@@ -141,6 +141,12 @@ post '/admin/add-paper/' do
   redirect '/'
 end
 
+get '/admin/add-system/' do
+  m = get_mysql
+  cv = common_vars(m, "Add System")
+  erb :add_system, :locals => cv
+end
+
 # for ELB health checks
 get '/health' do
   status 200
