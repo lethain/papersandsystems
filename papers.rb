@@ -56,8 +56,37 @@ get '/papers/' do
   erb :papers, :locals => cv
 end
 
+get '/admin/recent/' do
+  m = get_mysql
+  cv = common_vars(m, "Users")
+  if cv[:user] and cv[:user]['is_admin']
+    cv[:users] = Users.new(m).list({:sort => 'ts desc', :limit => 10})
+    cv[:read] = []
+    cv[:completed] = []
+    cv[:papers] = Papers.new(m).list({:sort => 'ts desc', :limit => 10})
+    cv[:systems] = Systems.new(m).list({:sort => 'ts desc', :limit => 10})
+    erb :recent, :locals => cv
+  else
+    status 403
+    body 'Must be logged in as an admin.'
+  end
+end
+
+get '/admin/users/' do
+  m = get_mysql
+  cv = common_vars(m, "Users")
+  if cv[:user] and cv[:user]['is_admin']
+    cv[:users] = Users.new(m).list
+    erb :users, :locals => cv
+  else
+    status 403
+    body 'Must be logged in as an admin.'
+  end
+end
+
+
 # should only allow this if you're an admin
-get '/paper/' do
+get '/admin/add-paper/' do
   m = get_mysql
   cv = common_vars(m, "Add Paper")
   erb :add, :locals => cv
@@ -67,8 +96,6 @@ post '/paper/' do
   Papers.new(get_mysql).create(params['name'], params['link'], params['description'])
   redirect '/'
 end
-
-
 
 # for ELB health checks
 get '/health' do

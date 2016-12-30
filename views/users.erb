@@ -1,0 +1,30 @@
+<div class="container">
+  <div class="col-sm-12">
+    <table class="table">
+      <thead class="thead-inverse">
+	<tr>
+	  <th>#</th>
+	  <th>Login</th>
+	  <th>Email</th>
+	  <th>Admin</th>
+	  <th>Read</th>
+	  <th>Completed</th>	  
+	  <th>Created</th>
+	</tr>
+      </thead>
+      <tbody>
+	<% users.each do |user| %>
+	<tr>
+	  <th scope="row"><%= user['id'] %></th>
+	  <td><%= user['login'] %></td>
+	  <td><%= user['email'] %></td>
+	  <td><%= user['is_admin'] %></td>
+	  <td><%= user['read_count'] %></td>	  	  
+	  <td><%= user['completion_count'] %></td>	  	  
+	  <td><%= user['ts'] %></td>	  
+	</tr>
+	<% end %>
+      </tbody>
+    </table>
+  </div>
+</div>  

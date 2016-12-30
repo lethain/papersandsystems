@@ -19,6 +19,17 @@ class PASModel
     results
   end
 
+  def list(opts=nil)
+    opts = opts ? opts : {}
+    sort = opts[:sort] ? opts[:sort] : 'id'
+    sql = "SELECT * FROM #{@table}"
+    sql += " ORDER BY #{sort}"
+    if opts[:limit]
+      sql += " LIMIT #{opts[:limit]}"
+    end
+    self.run(sql)
+  end
+
   def count
     key = 'COUNT(id)'
     sql = "SELECT #{key} FROM #{@table}"
@@ -31,7 +42,7 @@ class PASModel
   end
 
   def log(op, sql, results)
-    @log.info("#{op}: '#{sql}', #{results.to_a}")    
+    @log.info("#{op}: '#{sql}', #{results.to_a}")
   end
 
   def escape(val)
@@ -40,7 +51,7 @@ class PASModel
     else
       @m.escape(val)
     end
-  end  
+  end
 
   def standard(s)
     @m.escape(s.gsub(/\W+/, ' ').strip)

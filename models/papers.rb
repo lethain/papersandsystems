@@ -13,9 +13,4 @@ class Papers < PASModel
     self.run(sql)
   end
 
-  def list
-    sql = "SELECT * FROM #{@table} ORDER BY id"
-    self.run(sql)    
-  end
-
 end

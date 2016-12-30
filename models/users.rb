@@ -35,11 +35,6 @@ class Users < PASModel
     return results, success
   end
 
-  def list
-    sql = "SELECT * FROM #{@table} ORDER BY id"
-    self.run(sql)
-  end
-
   def get_by_id(id)
     id = self.escape(id)
     sql = "SELECT * FROM #{@table} WHERE id=#{id} LIMIT 1"
