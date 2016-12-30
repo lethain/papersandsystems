@@ -81,7 +81,11 @@ end
 get '/papers/' do
   m = get_mysql
   cv = common_vars(m, "Papers")
-  cv[:papers] = Papers.new(m).list(:cols => ['id', 'name', 'read_count'])
+  papers = Papers.new(m).list(:cols => ['id', 'name', 'read_count'])
+  if cv[:user]
+    papers = UserPapers.new(m).mark_read(cv[:user]['id'], papers)
+  end
+  cv[:papers] = papers
   erb :papers, :locals => cv
 end
 
