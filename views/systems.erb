@@ -40,7 +40,7 @@
 	<% systems.each do |system| %>
 	<tr>
 	  <th scope="row"><%= system['id'] %></th>
-	  <td><a href="#"><%= system['name'] %></td>
+	  <td><a href="/systems/<%= system['id'] %>/"><%= system['name'] %></td>
 	  <td>0 times</td>	  
 	  <td>New</td>
 	</tr>

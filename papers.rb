@@ -55,6 +55,29 @@ get '/' do
   erb :systems, :locals => cv
 end
 
+get '/systems/:id/' do
+  sid = params[:id]
+  m = get_mysql
+  cv = common_vars(m, "Papers")
+  s = Systems.new(m)
+  system = s.get('id', sid)
+  if system
+    puts "system: #{system}"
+    related_papers = []
+    cv[:system] = system
+    cv[:related_papers] = related_papers
+    has_solved = nil
+    cv[:has_solved] = has_solved
+    
+    erb system['template'].to_sym, :locals => cv
+
+  else
+    status 404
+    body "No such system found."
+  end
+end
+
+
 get '/papers/' do
   m = get_mysql
   cv = common_vars(m, "Papers")
