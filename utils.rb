@@ -22,7 +22,8 @@ class PASModel
   def list(opts=nil)
     opts = opts ? opts : {}
     sort = opts[:sort] ? opts[:sort] : 'id'
-    sql = "SELECT * FROM #{@table}"
+    fields = opts[:fields] ? opts[:fields].join(", ") : '*'
+    sql = "SELECT #{fields} FROM #{@table}"
     sql += " ORDER BY #{sort}"
     if opts[:limit]
       sql += " LIMIT #{opts[:limit]}"

@@ -28,7 +28,7 @@ class Users < PASModel
         sql = "UPDATE #{@table} SET access_token='#{access_token}', login='#{login}', avatar='#{avatar}', email='#{email}' WHERE id=#{id}"
         results = self.run(sql)
       else
-        sql = "INSERT INTO #{@table} (id, access_token, login, avatar, email) VALUES ('#{id}', '#{access_token}', '#{login}', '#{avatar}', '#{login}')"
+        sql = "INSERT INTO #{@table} (id, access_token, login, avatar, email) VALUES ('#{id}', '#{access_token}', '#{login}', '#{avatar}', '#{email}')"
         results = self.run(sql)
       end
     end
