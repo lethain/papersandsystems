@@ -12,5 +12,4 @@ class Papers < PASModel
     sql = "INSERT INTO #{@table} (name, link, description) VALUES ('#{name}', '#{link}', '#{description}')"
     self.run(sql)
   end
-
 end

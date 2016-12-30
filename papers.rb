@@ -92,6 +92,7 @@ get '/papers/:id/read' do
     ups.create(uid, pid)
     count = ups.user_count(uid)
     Users.new(m).update(uid, :read_count => count)
+    Papers.new(m).incr(pid, 'read_count')
     redirect "/papers/#{pid}/"
   else
     status 403
@@ -145,6 +146,11 @@ get '/admin/add-system/' do
   m = get_mysql
   cv = common_vars(m, "Add System")
   erb :add_system, :locals => cv
+end
+
+post '/admin/add-system/' do
+  Systems.new(get_mysql).create(params['name'], params['template'])
+  redirect '/'
 end
 
 # for ELB health checks

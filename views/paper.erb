@@ -5,7 +5,7 @@
 	<div class="card-block">
 	  <h2 class="card-title"><a href="<%= paper['link'] %>"><%= paper['name'] %></a></h2>
 	  <h6 class="card-subtitle text-muted">
-	    Added on <%= paper['ts'].strftime("%B %-d, %Y") %>.
+	    Added on <%= paper['ts'].strftime("%B %-d, %Y") %>, and read <%= paper['read_count'] %> time<% if paper['read_count'] != 1 %>s<% end %>.
 	    <% if user %>
 	    <% if has_read %>
 	    You read this paper on <%= has_read.strftime("%B %-d, %Y") %>.

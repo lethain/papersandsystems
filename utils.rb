@@ -50,6 +50,11 @@ class PASModel
     self.run(sql)
   end
 
+  def incr(id, key)
+    sql = "UPDATE #{@table} SET #{key} = #{key} + 1 WHERE id='#{self.escape(id)}'"
+    self.run(sql)
+  end
+
   def count(opts=nil)
     opts = opts ? opts : {}    
     key = 'COUNT(id)'
