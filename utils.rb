@@ -15,15 +15,25 @@ class PASModel
 
   def run(sql)
     results = @m.query(sql)
-    self.log('create', sql, results)
+    self.log(sql, results)
     results
+  end
+
+  def get(col, val, fields=nil)
+    if val
+      val = self.escape(val)
+      fields = fields ? fields.join(', ') : '*'
+      sql = "SELECT #{fields} FROM #{@table} WHERE #{col}='#{val}' LIMIT 1"
+      results = self.run(sql)
+      results.size > 0 ? results.first : nil
+    end
   end
 
   def list(opts=nil)
     opts = opts ? opts : {}
     sort = opts[:sort] ? opts[:sort] : 'id'
-    fields = opts[:fields] ? opts[:fields].join(", ") : '*'
-    sql = "SELECT #{fields} FROM #{@table}"
+    cols = opts[:cols] ? opts[:cols].join(", ") : '*'
+    sql = "SELECT #{cols} FROM #{@table}"
     sql += " ORDER BY #{sort}"
     if opts[:limit]
       sql += " LIMIT #{opts[:limit]}"
@@ -36,14 +46,14 @@ class PASModel
     sql = "SELECT #{key} FROM #{@table}"
     res = self.run(sql).to_a
     if res.size and res[0].has_key?(key)
-      res[0]['COUNT(id)']
+      res[0][key]
     else
       0
     end
   end
 
-  def log(op, sql, results)
-    @log.info("#{op}: '#{sql}', #{results.to_a}")
+  def log(sql, results)
+    @log.info("'#{sql}', #{results.to_a}")
   end
 
   def escape(val)

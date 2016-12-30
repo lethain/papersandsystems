@@ -3,9 +3,11 @@ require 'mongo'
 require 'json'
 require './models/users'
 require './models/papers'
+require './models/user_papers'
 require './models/systems'
 require 'dalli'
 require 'rack/session/dalli'
+require 'redcarpet'
 
 CLIENT_ID = ENV['GH_BASIC_CLIENT_ID']
 CLIENT_SECRET = ENV['GH_BASIC_SECRET_ID']
@@ -13,6 +15,10 @@ CLIENT_SECRET = ENV['GH_BASIC_SECRET_ID']
 configure do
   set :erb, :format => :html5
   use Rack::Session::Dalli, cache: Dalli::Client.new('127.0.0.1:11211')
+end
+
+def get_markdown
+  Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
 end
 
 def get_mysql
@@ -52,9 +58,43 @@ end
 get '/papers/' do
   m = get_mysql
   cv = common_vars(m, "Papers")
-  cv[:papers] = Papers.new(m).list
+  cv[:papers] = Papers.new(m).list(:cols => ['id', 'name', 'read_count'])
   erb :papers, :locals => cv
 end
+
+get '/papers/:id/' do
+  pid = params[:id]
+  m = get_mysql
+  p = Papers.new(m)
+  paper = p.get('id', pid)
+  if paper
+    cv = common_vars(m, "")
+    cv[:paper] = paper
+    cv[:has_read] = UserPapers.new(m).has_read(cv[:user]['id'], pid)
+    related_systems = []
+    cv[:systems] = related_systems
+    cv[:rendered] = get_markdown.render(paper['description'])
+    erb :paper, :locals => cv
+  else
+    status 404
+    body "No such paper found."
+  end
+end
+
+get '/papers/:id/read' do
+  m = get_mysql
+  pid = params[:id]
+  cv = common_vars(m, nil)
+  puts "read: #{pid}, #{cv[:user]}"
+  if cv[:user]
+    u = UserPapers.new(m).create(cv[:user]['id'], pid)
+    redirect "/papers/#{pid}/"
+  else
+    status 403
+    body "Must be logged in to read paper."
+  end
+end
+
 
 get '/admin/recent/' do
   m = get_mysql
@@ -92,7 +132,7 @@ get '/admin/add-paper/' do
   erb :add, :locals => cv
 end
 
-post '/paper/' do
+post '/admin/add-paper/' do
   Papers.new(get_mysql).create(params['name'], params['link'], params['description'])
   redirect '/'
 end

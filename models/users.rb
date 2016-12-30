@@ -36,18 +36,10 @@ class Users < PASModel
   end
 
   def get_by_id(id)
-    id = self.escape(id)
-    sql = "SELECT * FROM #{@table} WHERE id=#{id} LIMIT 1"
-    results = self.run(sql)
-    results.size > 0 ? results.first : nil
+    self.get('id', id)
   end
 
   def get_by_token(access_token)
-    if access_token
-      access_token = self.escape(access_token)
-      sql = "SELECT * FROM #{@table} WHERE access_token='#{access_token}' LIMIT 1"
-      results = self.run(sql)
-      results.size > 0 ? results.first : nil
-    end
+    self.get('access_token', access_token)
   end
 end
