@@ -1,14 +1,37 @@
 /* Stub for Papers CSS */
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+    line-height: 60px;
+    text-align: center;
+}
+
+.footer a {
+    color: #818a91;
+    text-decoration: underline;
+}
+
+.footer a:hover {
+    color: #0275d8;
+}
+
 nav {
     margin-bottom: 15px;
 }
 
 nav.navbar .nav-item.nav-link.float-xs-right {
     margin-right: 1.5rem;
-}
-
-nav.navbar .nav-item.nav-link.float-xs-right img {
-
 }
 
 #filters label {
@@ -20,10 +43,8 @@ nav.navbar .nav-item.nav-link.float-xs-right img {
     color: #fff;
 }
 
-
 #filters .form-group {
     background: #373a3c;
-    color: #fff;    
+    color: #fff;
     padding-top: .75rem;
 }
-    
