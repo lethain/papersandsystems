@@ -21,7 +21,20 @@
 	    Systems &amp; Papers
 	  </a>
 	  <% if user %>
-	  <a class="nav-item nav-link float-xs-right" href="https://github.com/settings/applications">Logged in as <%= user['login'] %></a>
+
+
+	  <% if user['avatar'] %>
+	  <a class="navbar-brand float-xs-right" href="https://github.com/settings/applications">	  
+	    <img class="d-inline-block align-top" height="30" width="30" src="<%= user['avatar'] %>">
+	  </a>
+	    <% else %>
+	    <a class="nav-item nav-link float-xs-right" href="https://github.com/settings/applications">
+	      Logged in as <%= user['login'] %>
+	    </a>
+	    <% end %>
+	    
+
+	  </a>
 	  <a class="btn btn-outline-secondary nav-item nav-link float-xs-right" href="/about/">About</a>
 	  <a class="btn btn-outline-secondary nav-item nav-link float-xs-right" href="/papers/">Papers
 	    <span class="tag"><%= user['read_count'] %> / <%= paper_count %></span>
@@ -49,7 +62,7 @@
 	    <a class="btn btn-secondary" href="/admin/associate/">Associate paper.</a>
 	    <a class="btn btn-secondary" href="/admin/users/">List users.</a>
 	    <a class="btn btn-secondary" href="/admin/recent/">Recent activity.</a>
-	  </p>	  
+	  </p>
 	</div>
       </div>
     </div>

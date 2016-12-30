@@ -7,6 +7,10 @@ nav.navbar .nav-item.nav-link.float-xs-right {
     margin-right: 1.5rem;
 }
 
+nav.navbar .nav-item.nav-link.float-xs-right img {
+
+}
+
 #filters label {
     padding-left: .5rem;
     padding-bottom: .25rem;
