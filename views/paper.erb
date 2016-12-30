@@ -1,0 +1,38 @@
+<div class="container">
+  <div class="col-sm-12">
+    <div class="row">
+      <div class="card">
+	<div class="card-block">
+	  <h2 class="card-title"><a href="<%= paper['link'] %>"><%= paper['name'] %></a></h2>
+	  <h6 class="card-subtitle text-muted">
+	    Added on <%= paper['ts'].strftime("%B %-d, %Y") %>.
+	    <% if user %>
+	    <% if has_read %>
+	    You read this paper on <%= has_read.strftime("%B %-d, %Y") %>.
+	    <% else %>
+	    <a href="/papers/<%= paper['id'] %>/read" class="">Mark paper as read!</a>
+	    <% end %>
+	    <% end %>	    
+	  </h6>
+	</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+	<div class="card">
+	  <div class="card-block">
+	    <%= rendered %>
+	  </div>
+	</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="card">
+	<div class="card-block">
+	  <h2 class="card-title">Related Systems</h2>
+	  <p>Topics from this paper are covered in these systems.</p>
+	</div>
+      </div>
+    </div>
+  </div>
+</div>

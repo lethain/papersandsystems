@@ -41,9 +41,26 @@ class PASModel
     self.run(sql)
   end
 
-  def count
+  def update(id, kvs)
+    sql = "UPDATE #{@table} SET"
+    kvs.each_pair do |k, v|
+      sql += " #{k}='#{self.escape(v)}'"
+    end
+    sql += " WHERE id='#{self.escape(id)}'"
+    self.run(sql)
+  end
+
+  def count(opts=nil)
+    opts = opts ? opts : {}    
     key = 'COUNT(id)'
     sql = "SELECT #{key} FROM #{@table}"
+    if opts[:where]
+      filters = opts[:where].map do |k,v|
+        "#{k}='#{self.escape(v)}'"
+      end
+      sql += " WHERE #{filters.join(' and ')}"
+    end
+    
     res = self.run(sql).to_a
     if res.size and res[0].has_key?(key)
       res[0][key]

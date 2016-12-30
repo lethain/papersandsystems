@@ -69,6 +69,7 @@ get '/papers/:id/' do
   paper = p.get('id', pid)
   if paper
     cv = common_vars(m, "")
+    puts "read: #{pid}, #{cv[:user]['id']}"
     cv[:paper] = paper
     cv[:has_read] = UserPapers.new(m).has_read(cv[:user]['id'], pid)
     related_systems = []
@@ -85,9 +86,12 @@ get '/papers/:id/read' do
   m = get_mysql
   pid = params[:id]
   cv = common_vars(m, nil)
-  puts "read: #{pid}, #{cv[:user]}"
   if cv[:user]
-    u = UserPapers.new(m).create(cv[:user]['id'], pid)
+    uid = cv[:user]['id']
+    ups = UserPapers.new(m)
+    ups.create(uid, pid)
+    count = ups.user_count(uid)
+    Users.new(m).update(uid, :read_count => count)
     redirect "/papers/#{pid}/"
   else
     status 403
