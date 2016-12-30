@@ -16,21 +16,25 @@ configure do
 end
 
 def get_mysql
-  @m = Mysql2::Client.new(:host => "localhost", :username => "root", :database => "papers")
+  Mysql2::Client.new(:host => "localhost", :username => "root", :database => "papers")
+end
 
+def get_counts(m)
+  pc = Papers.new(m).count()
+  sc = Systems.new(m).count()
+  return sc, pc
 end
 
 def common_vars(m, title)
   access_token = authenticated?
+  system_count, paper_count = get_counts(m)
   {
     :title => title,
     :user => Users.new(m).get_by_token(access_token),
     :client_id => CLIENT_ID,
     :access_token => access_token,
-    :user_paper_count => 0,
-    :user_system_count => 0,
-    :paper_count => 5,
-    :system_count => 4
+    :paper_count => paper_count,
+    :system_count => system_count
   }
 end
 

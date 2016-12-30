@@ -19,6 +19,17 @@ class PASModel
     results
   end
 
+  def count
+    key = 'COUNT(id)'
+    sql = "SELECT #{key} FROM #{@table}"
+    res = self.run(sql).to_a
+    if res.size and res[0].has_key?(key)
+      res[0]['COUNT(id)']
+    else
+      0
+    end
+  end
+
   def log(op, sql, results)
     @log.info("#{op}: '#{sql}', #{results.to_a}")    
   end
