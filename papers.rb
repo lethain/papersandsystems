@@ -66,10 +66,10 @@ get '/systems/:id/' do
   if system
     related_papers = []
     cv[:system] = system
-    cv[:papers] = SystemPapers.new(m).related_systems(sid)
+    cv[:papers] = SystemPapers.new(m).related_papers(sid)
     if cv[:user]
       cv[:papers] = UserPapers.new(m).mark_read(cv[:user]['id'], cv[:papers])
-    end    
+    end
     cv[:papers_table] = erb(:table_papers, :locals => cv, :layout=> nil)
     has_solved = nil
     cv[:has_solved] = has_solved
