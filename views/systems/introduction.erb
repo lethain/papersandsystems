@@ -89,24 +89,6 @@
   </div>
   <% end %>
   <div class="row">
-    <div class="col-sm-3">
-      <div class="card">
-	<h6 class="card-header">Submit via website</h6>
-	<form method="post">
-	  <a href="/systems/<%= system['id'] %>/input/" class="btn btn-primary">Get input</a>
-	</form>
-      </div>
-    </div>
-    <div class="col-sm-9">
-      <div class="card">
-	<h6 class="card-header">Submit via CLI</h6>
-	<pre class="card-pre">curl <%= domain %>/systems/<%= system['id'] %>/input/ > <%= system['id'] %>_input.txt
-python your_script.py &lt; <%= system['id'] %>_input.txt &gt; <%= system['id'] %>_output.txt
-curl --data-binary "@<%= system['id'] %>_output.txt" <%= domain %>/systems/<%= system['id'] %>/output/?token=<%= upload_token %></pre>
-      </div>
-    </div>
-  </div>    
-  <div class="row">
     <div class="col-sm-12">
       <div class="card">
 	<h6 class="card-header">Submit via RunKit</h6>
@@ -120,6 +102,16 @@ curl --data-binary "@<%= system['id'] %>_output.txt" <%= domain %>/systems/<%= s
       </div>
     </div>
   </div>
+  <div class="row">  
+    <div class="col-sm-12">
+      <div class="card">
+	<h6 class="card-header">Submit via CLI</h6>
+	<pre class="card-pre">curl <%= domain %>/systems/<%= system['id'] %>/input/ > <%= system['id'] %>_input.txt
+python your_script.py &lt; <%= system['id'] %>_input.txt &gt; <%= system['id'] %>_output.txt
+curl --data-binary "@<%= system['id'] %>_output.txt" <%= domain %>/systems/<%= system['id'] %>/output/?token=<%= upload_token %></pre>
+      </div>
+    </div>
+  </div>    
   <% else %>
   <div class="row">
     <div class="col-sm-12">
