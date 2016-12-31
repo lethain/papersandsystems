@@ -69,7 +69,7 @@ end
 get '/' do
   m = get_mysql
   cv = common_vars(m, "Systems")
-  cv[:systems] = Systems.new(m).list
+  cv[:systems] = Systems.new(m).list(:cols => ['id', 'name', 'completion_count'])
   if cv[:user]
     cv[:systems] = UserSystems.new(m).mark_completed(cv[:user]['id'], cv[:systems])
   end  
