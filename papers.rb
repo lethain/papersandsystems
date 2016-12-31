@@ -53,7 +53,7 @@ get '/' do
   m = get_mysql
   cv = common_vars(m, "Systems")
   cv[:systems] = Systems.new(m).list
-  cv[:systems_table] = erb(:table_systems, :locals => cv, :layout=> nil)  
+  cv[:systems_table] = erb(:table_systems, :locals => cv, :layout=> nil)
   erb :systems, :locals => cv
 end
 
@@ -66,7 +66,11 @@ get '/systems/:id/' do
   if system
     related_papers = []
     cv[:system] = system
-    cv[:related_papers] = related_papers
+    cv[:papers] = SystemPapers.new(m).related_systems(sid)
+    if cv[:user]
+      cv[:papers] = UserPapers.new(m).mark_read(cv[:user]['id'], cv[:papers])
+    end    
+    cv[:papers_table] = erb(:table_papers, :locals => cv, :layout=> nil)
     has_solved = nil
     cv[:has_solved] = has_solved
     erb system['template'].to_sym, :locals => cv
@@ -85,6 +89,7 @@ get '/papers/' do
     papers = UserPapers.new(m).mark_read(cv[:user]['id'], papers)
   end
   cv[:papers] = papers
+  cv[:papers_table] = erb(:table_papers, :locals => cv, :layout=> nil)
   erb :papers, :locals => cv
 end
 

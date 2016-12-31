@@ -17,9 +17,9 @@ class SystemPapers < PASModel
   end
 
   def related_papers(system_id)
-    # SELECT papers.name, papers.id FROM system_papers JOIN papers
-    # ON papers.id=system_papers.paper_id WHERE paper_id='1' ORDER BY id ;
-    #sql = "SELECT papers.name, papers.id papers.    
+    system_id = self.escape(system_id)
+    sql = "SELECT papers.id, papers.name, papers.read_count FROM system_papers JOIN systems ON systems.id=system_papers.system_id WHERE system_id='#{system_id}' ORDER BY papers.id"
+    self.run(sql)
   end
 
   def bulk_create(paper_id, system_ids)
