@@ -12,4 +12,5 @@ class Systems < PASModel
     sql = "INSERT INTO #{@table} (name, template) VALUES ('#{name}', '#{template}')"
     self.run(sql)
   end
+  
 end

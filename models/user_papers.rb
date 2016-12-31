@@ -33,7 +33,6 @@ class UserPapers < PASModel
     key = 'ts'
     sql = "SELECT #{key} FROM #{@table} WHERE user_id='#{user_id}' AND paper_id='#{paper_id}'"
     res = self.run(sql).to_a
-    puts "has_read: #{res}"
     if res.size > 0 and res[0].has_key?(key)
       res[0][key]
     else

@@ -72,7 +72,6 @@ class PASModel
     if opts[:limit]
       sql += " LIMIT #{opts[:limit]}"
     end
-    puts "SQL: #{sql}"
     self.run(sql)
   end
 

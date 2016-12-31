@@ -7,6 +7,7 @@ require './models/papers'
 require './models/user_papers'
 require './models/systems'
 require './models/system_papers'
+require './models/user_systems'
 require 'dalli'
 require 'rack/session/dalli'
 require 'redcarpet'
@@ -84,11 +85,12 @@ get '/systems/:id/' do
     cv[:system] = system
     cv[:papers] = SystemPapers.new(m).related_papers(sid)
     if cv[:user]
-      cv[:upload_token] = upload_token(cv[:user]['id'], sid)
-      cv[:papers] = UserPapers.new(m).mark_read(cv[:user]['id'], cv[:papers])
+      uid = cv[:user]['id']
+      cv[:upload_token] = upload_token(uid, sid)
+      cv[:papers] = UserPapers.new(m).mark_read(uid, cv[:papers])
+      cv[:has_completed] = UserSystems.new(m).has_completed(uid, sid)
     end
     cv[:papers_table] = erb(:table_papers, :locals => cv, :layout=> nil)
-    cv[:has_completed] = nil
     erb "systems/#{system['template']}".to_sym, :locals => cv
   else
     status 404
@@ -114,7 +116,7 @@ post '/systems/:id/output/' do
   token = params[:token]
   if token
     begin
-      uid, sid, ts = decode_token(token)
+      uid, sid, ts = decode_token(token.strip)
     rescue
       status 403
       return body "Supplied 'token' could not be validated."
@@ -141,6 +143,17 @@ post '/systems/:id/output/' do
         body resp
       else
         resp += "\nExcellent, that looks correct!\n"
+        uss = UserSystems.new(m)        
+        already_solved = uss.has_completed(uid, sid)
+        if already_solved
+          resp += "You've already solved this problem.\n"
+        else
+          uss.create(uid, sid)
+          count = uss.user_count(uid)
+          Users.new(m).update(uid, :completion_count => count)
+          Systems.new(m).incr(sid, 'completion_count')
+          resp += "This is your first time solving this problem, congrats.\n"
+        end
         status 200
         body resp
       end
@@ -153,7 +166,6 @@ post '/systems/:id/output/' do
     body "Must supply 'token' parameter."
   end
 end
-
 
 get '/papers/' do
   m = get_mysql
