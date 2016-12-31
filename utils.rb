@@ -1,10 +1,38 @@
 require 'logger'
+require 'openssl'
+require 'digest/sha1'
+require 'base64'
+require 'cgi'
+
+UPLOAD_TOKEN_KEY = 'ad5b5ecb30391fb29294891f6b5e4cf6685fae26'
+UPLOAD_TOKEN_IV = "yz\xF5\xCB\x0E\xB8\xE7\xD5'\x80h\x85Q\xCD)\x18"
+
 
 def get_logger
   Logger.new(STDERR)
 end
 
+def upload_token(uid, sid)
+  ts = Time.now.to_i
+  cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
+  cipher.encrypt
+  cipher.key = UPLOAD_TOKEN_KEY
+  cipher.iv = UPLOAD_TOKEN_IV
+  encrypted = cipher.update("#{uid},#{sid},#{ts}")
+  encrypted << cipher.final
+  CGI.escape(Base64.encode64(encrypted))
+end
 
+def decode_token(token)
+  token = Base64.decode64(CGI.unescape(token))
+  cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
+  cipher.decrypt
+  cipher.key = UPLOAD_TOKEN_KEY
+  cipher.iv = UPLOAD_TOKEN_IV
+  decrypted = cipher.update(token)
+  decrypted << cipher.final
+  decrypted.split(",")
+end
 
 class PASModel
   def initialize(mysql, table)

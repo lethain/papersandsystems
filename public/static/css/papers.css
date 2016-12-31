@@ -54,3 +54,7 @@ pre.card-pre {
     background: #eee;
     margin-bottom: 0;
 }
+
+.text-center {
+    text-align: center;
+}

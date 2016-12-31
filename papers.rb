@@ -39,7 +39,6 @@ def common_vars(m, title=nil)
     :domain => 'http://localhost:9292',
     :title => title,
     :user => Users.new(m).get_by_token(access_token),
-    :client_id => CLIENT_ID,
     :access_token => access_token,
     :paper_count => paper_count,
     :system_count => system_count
@@ -61,6 +60,10 @@ get '/logout/' do
   redirect '/'
 end
 
+get '/login/' do
+  redirect "https://github.com/login/oauth/authorize?scope=user:email&client_id=#{CLIENT_ID}"
+end
+
 get '/' do
   m = get_mysql
   cv = common_vars(m, "Systems")
@@ -80,6 +83,7 @@ get '/systems/:id/' do
     cv[:system] = system
     cv[:papers] = SystemPapers.new(m).related_papers(sid)
     if cv[:user]
+      cv[:upload_token] = upload_token(cv[:user]['id'], sid)
       cv[:papers] = UserPapers.new(m).mark_read(cv[:user]['id'], cv[:papers])
     end
     cv[:papers_table] = erb(:table_papers, :locals => cv, :layout=> nil)
@@ -92,8 +96,6 @@ get '/systems/:id/' do
 end
 
 get '/systems/:id/input/' do
-  # Content-Type: application/octet-stream
-  # Content-Disposition: attachment; filename="filename.pdf"
   sid = params[:id]
   m = get_mysql
   s = Systems.new(m)
@@ -104,6 +106,30 @@ get '/systems/:id/input/' do
   else
     status 404
     body "No such system found."
+  end
+end
+
+post '/systems/:id/output/' do
+  token = params[:token]
+  if token
+    begin
+      uid, sid, ts = decode_token(token)
+    rescue
+      status 403
+      return body "Supplied 'token' could not be validated."
+    end
+    if sid == params['id']
+      puts uid, sid, ts
+      puts request.body.read
+      status 200
+      body "Successful submission for system #{sid}!"
+    else
+      status 400
+      body "Supplied 'token' associated with system #{sid}, this is #{params['id']}."
+    end
+  else
+    status 403
+    body "Must supply 'token' parameter."
   end
 end
 
