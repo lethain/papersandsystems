@@ -5,6 +5,7 @@ require './models/users'
 require './models/papers'
 require './models/user_papers'
 require './models/systems'
+require './models/system_papers'
 require 'dalli'
 require 'rack/session/dalli'
 require 'redcarpet'
@@ -192,6 +193,18 @@ get '/admin/add-system/' do
   end
 end
 
+post '/admin/add-system/' do
+  m = get_mysql
+  cv = common_vars(m)
+  if cv[:user] and cv[:user]['is_admin']
+    Systems.new(get_mysql).create(params['name'], params['template'])
+    redirect '/'
+  else
+    status 403
+    body 'Must be logged in as an admin.'
+  end
+end
+
 get '/admin/associate/' do
   m = get_mysql
   cv = common_vars(m, "Associate Systems With Paper")
@@ -208,20 +221,10 @@ post '/admin/associate/' do
   m = get_mysql
   cv = common_vars(m)
   if cv[:user] and cv[:user]['is_admin']
-    puts "params: #{params}"
-    body params.to_s
-  else
-    status 403
-    body 'Must be logged in as an admin.'
-  end
-end
-
-post '/admin/add-system/' do
-  m = get_mysql
-  cv = common_vars(m)
-  if cv[:user] and cv[:user]['is_admin']
-    Systems.new(get_mysql).create(params['name'], params['template'])
-    redirect '/'
+    paper_id = params['paper_id']
+    system_ids = params['system_id']
+    SystemPapers.new(m).bulk_create(paper_id, system_ids)
+    redirect "/papers/#{paper_id}/"
   else
     status 403
     body 'Must be logged in as an admin.'
