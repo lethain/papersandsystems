@@ -49,6 +49,12 @@ def authenticated?
   session[:access_token]
 end
 
+get '/about/' do
+  m = get_mysql
+  cv = common_vars(m, "About")
+  erb :about, :locals => cv
+end
+
 get '/' do
   m = get_mysql
   cv = common_vars(m, "Systems")
