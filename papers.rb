@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'sinatra'
 require 'mongo'
 require 'json'
@@ -119,10 +120,30 @@ post '/systems/:id/output/' do
       return body "Supplied 'token' could not be validated."
     end
     if sid == params['id']
-      puts uid, sid, ts
-      puts request.body.read
-      status 200
-      body "Successful submission for system #{sid}!"
+      m = get_mysql
+      s = Systems.new(m)
+      system = s.get('id', sid)
+      solution = File.open("solutions/#{system['template']}.out")
+      errors = 0
+      resp = ""
+      for line in request.body
+        sol_line = solution.gets
+        if line == sol_line
+          resp += "✓ #{line}"
+        else
+          resp += "✗ #{line}"
+          errors += 1
+        end
+      end
+      if errors > 0
+        resp += "\nSorry, that doesn't look quite right. We found #{errors} errors.\n"
+        status 400
+        body resp
+      else
+        resp += "\nExcellent, that looks correct!\n"
+        status 200
+        body resp
+      end
     else
       status 400
       body "Supplied 'token' associated with system #{sid}, this is #{params['id']}."
