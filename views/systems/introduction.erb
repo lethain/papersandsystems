@@ -81,7 +81,7 @@
   <div class="row">
     <div class="col-sm-4">
       <div class="card">
-	<h6 class="card-header">Submit via form</h6>
+	<h6 class="card-header">Submit via website</h6>
 	<a href="/systems/<%= system['id'] %>/input/" class="btn btn-primary">Get input</a>
       </div>
     </div>
@@ -89,7 +89,7 @@
       <div class="card">
 	<h6 class="card-header">Submit via CLI</h6>
 	<pre class="card-pre">curl <%= domain %>/systems/<%= system['id'] %>/input/ > <%= system['id'] %>_input.txt
-python your_script.py &lt; <%= system['id'] %>_input.txt
+python your_script.py &lt; <%= system['id'] %>_input.txt &gt; <%= system['id'] %>_output.txt
 	</pre>
       </div>
     </div>
