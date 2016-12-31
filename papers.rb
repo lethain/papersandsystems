@@ -31,7 +31,7 @@ def get_counts(m)
   return sc, pc
 end
 
-def common_vars(m, title)
+def common_vars(m, title=nil)
   access_token = authenticated?
   system_count, paper_count = get_counts(m)
   {
@@ -68,7 +68,7 @@ get '/systems/:id/' do
     cv[:related_papers] = related_papers
     has_solved = nil
     cv[:has_solved] = has_solved
-    
+
     erb system['template'].to_sym, :locals => cv
 
   else
@@ -161,23 +161,71 @@ end
 get '/admin/add-paper/' do
   m = get_mysql
   cv = common_vars(m, "Add Paper")
-  erb :add, :locals => cv
+  if cv[:user] and cv[:user]['is_admin']
+    erb :add, :locals => cv
+  else
+    status 403
+    body 'Must be logged in as an admin.'    
+  end
 end
 
 post '/admin/add-paper/' do
-  Papers.new(get_mysql).create(params['name'], params['link'], params['description'])
-  redirect '/'
+  m = get_mysql
+  cv = common_vars(m)
+  if cv[:user] and cv[:user]['is_admin']  
+    Papers.new(m).create(params['name'], params['link'], params['description'])
+    redirect '/papers/'
+  else
+    status 403
+    body 'Must be logged in as an admin.'
+  end
 end
 
 get '/admin/add-system/' do
   m = get_mysql
   cv = common_vars(m, "Add System")
-  erb :add_system, :locals => cv
+  if cv[:user] and cv[:user]['is_admin']
+    erb :add_system, :locals => cv
+  else
+    status 403
+    body 'Must be logged in as an admin.'
+  end
+end
+
+get '/admin/associate/' do
+  m = get_mysql
+  cv = common_vars(m, "Associate Systems With Paper")
+  if cv[:user] and cv[:user]['is_admin']
+    cv[:systems] = Systems.new(m).list
+    erb :associate_papers, :locals => cv
+  else
+    status 403
+    body 'Must be logged in as an admin.'
+  end
+end
+
+post '/admin/associate/' do
+  m = get_mysql
+  cv = common_vars(m)
+  if cv[:user] and cv[:user]['is_admin']
+    puts "params: #{params}"
+    body params.to_s
+  else
+    status 403
+    body 'Must be logged in as an admin.'
+  end
 end
 
 post '/admin/add-system/' do
-  Systems.new(get_mysql).create(params['name'], params['template'])
-  redirect '/'
+  m = get_mysql
+  cv = common_vars(m)
+  if cv[:user] and cv[:user]['is_admin']
+    Systems.new(get_mysql).create(params['name'], params['template'])
+    redirect '/'
+  else
+    status 403
+    body 'Must be logged in as an admin.'
+  end
 end
 
 # for ELB health checks

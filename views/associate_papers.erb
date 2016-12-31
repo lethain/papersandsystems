@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="col-sm-12">
+    <h2><%= title %></h2>
+    <form method="post">
+      <div class="form-group row">
+	<label for="paper_id" class="col-xs-2 col-form-label">Paper Id</label>
+	<div class="col-xs-10">
+	  <input class="form-control" name="paper_id" id="paper_id" type="text" value="">
+	</div>
+      </div>
+      <div class="form-group row">
+	<div class="col-xs-2">
+	  <label>Systems</label>
+	</div>
+	<div class="col-xs-10">	
+	<% systems.each do |system| %>
+	<div class="form-check">
+	  <label class="form-check-label">
+	    <input class="form-check-input" name="system_id[]" type="checkbox" value="<%= system['id'] %>">
+	    <%= system['name'] %>
+	  </label>
+	</div>
+	<% end %>
+	</div>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
