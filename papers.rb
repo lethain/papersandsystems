@@ -36,6 +36,7 @@ def common_vars(m, title=nil)
   access_token = authenticated?
   system_count, paper_count = get_counts(m)
   {
+    :domain => 'http://localhost:9292',
     :title => title,
     :user => Users.new(m).get_by_token(access_token),
     :client_id => CLIENT_ID,
@@ -82,9 +83,24 @@ get '/systems/:id/' do
       cv[:papers] = UserPapers.new(m).mark_read(cv[:user]['id'], cv[:papers])
     end
     cv[:papers_table] = erb(:table_papers, :locals => cv, :layout=> nil)
-    has_solved = nil
-    cv[:has_solved] = has_solved
-    erb system['template'].to_sym, :locals => cv
+    cv[:has_completed] = nil
+    erb "systems/#{system['template']}".to_sym, :locals => cv
+  else
+    status 404
+    body "No such system found."
+  end
+end
+
+get '/systems/:id/input/' do
+  # Content-Type: application/octet-stream
+  # Content-Disposition: attachment; filename="filename.pdf"
+  sid = params[:id]
+  m = get_mysql
+  s = Systems.new(m)
+  system = s.get('id', sid)
+  if system
+    fn = "#{sid}_input.txt"
+    send_file "solutions/#{system['template']}.in", :filename => fn
   else
     status 404
     body "No such system found."

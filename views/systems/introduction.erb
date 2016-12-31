@@ -1,16 +1,101 @@
+
+
 <div class="container">
   <div class="row">
     <div class="col-sm-12">
       <div class="card card-block">
-	<h4 class="card-title"><%= system['name'] %></h4>
-	<p class="card-text">
-	  Yeah... do some stuff.
-	  
-	</p>
-	<pre><%= system %></pre>
+	<h2 class="card-title"><%= system['name'] %></h2>
+	<h6 class="card-subtitle text-muted">
+	  Added on <%= system['ts'].strftime("%B %-d, %Y") %> and completed <%= system['completion_count'] %> time<% if system['completion_count'] != 1 %>s<% end %>.
+	  <% if user and has_completed %>
+	  You completed this system on <%= has_read.strftime("%B %-d, %Y") %>.
+	  <% end %>
+	</h6>
       </div>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  Welcome to building your first system on Systems &amp; Papers!
+	</p>
+	<p class="card-text">
+	  Each system is a program that you write,
+	  which takes some input from standard in and return it to standard out.
+	  We'll supply some sample input and expected sample output, and then you'll validate
+	  your system by running a final set of input against your system and then sending us
+	  the corresponding output. If the output, matches, then congratulation!, you've built
+	  a working system.
+	</p>
+	<p class="card-text">
+	  Most of the systems we build will be focusing on exploring concepts from distributed systems
+	  or understanding how software we already heavily rely on, like Redis or Memcached, works.
+	  This one will be a wee bit different, and is focused on getting you comfortable with the process
+	  of submitting solutions.
+	</p>
+	<p class="card-text">
+	  The first system takes number as input and then output that number multiplied by three
+	  as the output.
+	</p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Input</h6>
+<pre class="card-pre">1
+2
+5
+10
+3</pre>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Ouput</h6>
+<pre class="card-pre">3
+6
+15
+30
+9</pre>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  Once you've verified that your system works properly, then the next step
+	  is to download the validation input. There are a few ways to accomplish that goal.
+	  You can always download the input via the <b>Get input</b> button,
+	  and upload via the <b>Submit output</b> form.
+	</p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="card">
+	<h6 class="card-header">Submit via form</h6>
+	<a href="/systems/<%= system['id'] %>/input/" class="btn btn-primary">Get input</a>
+      </div>
+    </div>
+    <div class="col-sm-8">
+      <div class="card">
+	<h6 class="card-header">Submit via CLI</h6>
+	<pre class="card-pre">curl <%= domain %>/systems/<%= system['id'] %>/input/ > <%= system['id'] %>_input.txt
+python your_script.py &lt; <%= system['id'] %>_input.txt
+	</pre>
+      </div>
+    </div>
+  </div>
+
+
   <% if papers.size > 0 %>
   <div class="row">
     <div class="col-sm-12">
@@ -22,5 +107,5 @@
   </div>
   <% end %>
 
-  
+
 </div>

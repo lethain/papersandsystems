@@ -19,7 +19,7 @@ body {
 
 .footer a {
     color: #818a91;
-    text-decoration: underline;
+    font-style: italic;
 }
 
 .footer a:hover {
@@ -47,4 +47,10 @@ nav.navbar .nav-item.nav-link.float-xs-right {
     background: #373a3c;
     color: #fff;
     padding-top: .75rem;
+}
+
+pre.card-pre {
+    padding: 1em;
+    background: #eee;
+    margin-bottom: 0;
 }
