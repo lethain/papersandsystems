@@ -28,6 +28,19 @@ def get_mysql
   Mysql2::Client.new(:host => "localhost", :username => "root", :database => "papers")
 end
 
+def error_page(status_code, msg)
+  status status_code
+  m = get_mysql  
+  cv = common_vars(m, status_code.to_s)
+  cv[:status_code] = status_code
+  cv[:error_msg] = msg
+  erb :not_found, :locals => cv
+end
+
+not_found do
+  error_page(404, "Not Found")
+end
+
 def get_counts(m)
   pc = Papers.new(m).count()
   sc = Systems.new(m).count()
@@ -96,8 +109,7 @@ get '/systems/:id/' do
     cv[:papers_table] = erb(:table_papers, :locals => cv, :layout=> nil)
     erb "systems/#{system['template']}".to_sym, :locals => cv
   else
-    status 404
-    body "No such system found."
+    error_page(404, "No such system found.")
   end
 end
 
@@ -196,8 +208,7 @@ get '/papers/:id/' do
     cv[:rendered] = get_markdown.render(paper['description'])
     erb :paper, :locals => cv
   else
-    status 404
-    body "No such paper found."
+    error_page(404, "No such paper found.")
   end
 end
 
@@ -214,11 +225,9 @@ get '/papers/:id/read' do
     Papers.new(m).incr(pid, 'read_count')
     redirect "/papers/#{pid}/"
   else
-    status 403
-    body "Must be logged in to read paper."
+    error_page(403, 'Must be logged in to mark paper as read.')
   end
 end
-
 
 get '/admin/recent/' do
   m = get_mysql
@@ -231,8 +240,7 @@ get '/admin/recent/' do
     cv[:systems] = Systems.new(m).list({:sort => 'ts desc', :limit => 10})
     erb :recent, :locals => cv
   else
-    status 403
-    body 'Must be logged in as an admin.'
+    error_page(403, 'Must be logged in as an admin.')
   end
 end
 
@@ -243,11 +251,9 @@ get '/admin/users/' do
     cv[:users] = Users.new(m).list
     erb :users, :locals => cv
   else
-    status 403
-    body 'Must be logged in as an admin.'
+    error_page(403, 'Must be logged in as an admin.')    
   end
 end
-
 
 # should only allow this if you're an admin
 get '/admin/add-paper/' do
@@ -256,8 +262,7 @@ get '/admin/add-paper/' do
   if cv[:user] and cv[:user]['is_admin']
     erb :add, :locals => cv
   else
-    status 403
-    body 'Must be logged in as an admin.'
+    error_page(403, 'Must be logged in as an admin.')    
   end
 end
 
@@ -268,8 +273,7 @@ post '/admin/add-paper/' do
     Papers.new(m).create(params['name'], params['link'], params['description'])
     redirect '/papers/'
   else
-    status 403
-    body 'Must be logged in as an admin.'
+    error_page(403, 'Must be logged in as an admin.')
   end
 end
 
@@ -279,8 +283,7 @@ get '/admin/add-system/' do
   if cv[:user] and cv[:user]['is_admin']
     erb :add_system, :locals => cv
   else
-    status 403
-    body 'Must be logged in as an admin.'
+    error_page(403, 'Must be logged in as an admin.')    
   end
 end
 
@@ -291,8 +294,7 @@ post '/admin/add-system/' do
     Systems.new(get_mysql).create(params['name'], params['template'])
     redirect '/'
   else
-    status 403
-    body 'Must be logged in as an admin.'
+    error_page(403, 'Must be logged in as an admin.')    
   end
 end
 
@@ -303,8 +305,7 @@ get '/admin/associate/' do
     cv[:systems] = Systems.new(m).list
     erb :associate_papers, :locals => cv
   else
-    status 403
-    body 'Must be logged in as an admin.'
+    error_page(403, 'Must be logged in as an admin.')    
   end
 end
 
@@ -317,8 +318,7 @@ post '/admin/associate/' do
     SystemPapers.new(m).bulk_create(paper_id, system_ids)
     redirect "/papers/#{paper_id}/"
   else
-    status 403
-    body 'Must be logged in as an admin.'
+    error_page(403, 'Must be logged in as an admin.')    
   end
 end
 
