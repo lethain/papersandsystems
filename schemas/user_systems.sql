@@ -7,4 +7,5 @@ CREATE TABLE IF NOT EXISTS user_systems(
        ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
        PRIMARY KEY (id),
        UNIQUE (user_id, system_id)
-) engine=InnoDB
+) engine=InnoDB;
+CREATE INDEX usindex ON user_systems (user_id, system_id);

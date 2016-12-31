@@ -11,4 +11,5 @@ CREATE TABLE IF NOT EXISTS users(
        read_count INT(11) DEFAULT 0,
        completion_count INT(11) DEFAULT 0,
        PRIMARY KEY (id)
-) engine=InnoDB
+) engine=InnoDB;
+CREATE INDEX atindex ON users (access_token);

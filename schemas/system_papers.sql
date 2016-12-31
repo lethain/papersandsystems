@@ -7,4 +7,6 @@ CREATE TABLE IF NOT EXISTS system_papers(
        ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
        PRIMARY KEY (id),
        UNIQUE (paper_id, system_id)
-) engine=InnoDB
+) engine=InnoDB;
+CREATE INDEX spindex ON system_papers (paper_id, system_id);
+CREATE INDEX psindex ON system_papers (system_id, paper_id);

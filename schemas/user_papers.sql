@@ -7,4 +7,6 @@ CREATE TABLE IF NOT EXISTS user_papers(
        ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
        PRIMARY KEY (id),
        UNIQUE (paper_id, user_id)
-) engine=InnoDB
+) engine=InnoDB;
+CREATE INDEX puindex ON user_papers (paper_id, user_id);
+CREATE INDEX upindex ON user_papers (user_id, paper_id);
