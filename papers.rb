@@ -70,6 +70,9 @@ get '/' do
   m = get_mysql
   cv = common_vars(m, "Systems")
   cv[:systems] = Systems.new(m).list
+  if cv[:user]
+    cv[:systems] = UserSystems.new(m).mark_completed(cv[:user]['id'], cv[:systems])
+  end  
   cv[:systems_table] = erb(:table_systems, :locals => cv, :layout=> nil)
   erb :systems, :locals => cv
 end

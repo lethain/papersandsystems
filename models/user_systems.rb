@@ -15,6 +15,20 @@ class UserSystems < PASModel
     self.run(sql)
   end
 
+  def mark_completed(user_id, systems)
+    sids = systems.map { |x| self.escape(x['id']) }
+    sql = "SELECT system_id, ts FROM #{@table} WHERE user_id='#{user_id}' AND system_id IN (#{sids.join(',')})"
+    res = self.run(sql)
+    ts = {}
+    res.each do |row|
+      ts[row['system_id']] = row['ts']
+    end
+    systems.each do |system|
+      system['user_has_completed'] = ts[system['id']]
+    end
+    systems
+  end  
+
   def has_completed(user_id, system_id)
     key = 'ts'
     sql = "SELECT #{key} FROM #{@table} WHERE user_id='#{user_id}' AND system_id='#{system_id}'"

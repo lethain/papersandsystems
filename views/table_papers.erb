@@ -13,7 +13,7 @@
       <th scope="row"><%= paper['id'] %></th>
       <td><a href="/papers/<%= paper['id'] %>/"><%= paper['name'] %></a></td>
       <td><%= paper['read_count'] %> reader<% if paper['read_count'] != 1 %>s<% end %></td>
-      <td><% if paper['user_has_read'] %>Read on <%= paper['user_has_read'].strftime("%B %-d, %Y") %><% else %>Give it a chance!<% end %></td>
+      <td><% if paper['user_has_read'] %>Read on <%= paper['user_has_read'].strftime("%B %-d, %Y") %><% else %>New<% end %></td>
     </tr>
     <% end %>
   </tbody>
