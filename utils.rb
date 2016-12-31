@@ -34,10 +34,17 @@ class PASModel
     sort = opts[:sort] ? opts[:sort] : 'id'
     cols = opts[:cols] ? opts[:cols].join(", ") : '*'
     sql = "SELECT #{cols} FROM #{@table}"
-    sql += " ORDER BY #{sort}"
+    if opts[:where]
+      filters = opts[:where].map do |k,v|
+        "#{k}='#{self.escape(v)}'"
+      end
+      sql += " WHERE #{filters.join(' and ')}"
+    end
+    sql += " ORDER BY #{sort}"    
     if opts[:limit]
       sql += " LIMIT #{opts[:limit]}"
     end
+    puts "SQL: #{sql}"
     self.run(sql)
   end
 

@@ -1,4 +1,4 @@
-<% if not user %>
+<% if not user and hide %>
 <div class="container">
   <div class="col-sm-12">
     <div class="card card-block">
@@ -27,25 +27,6 @@
 
 <div class="container">
   <div class="col-sm-12">
-    <table class="table">
-      <thead class="thead-inverse">
-	<tr>
-	  <th>#</th>
-	  <th>Name</th>
-	  <th>Solved By</th>	  
-	  <th>Status</th>
-	</tr>
-      </thead>
-      <tbody>
-	<% systems.each do |system| %>
-	<tr>
-	  <th scope="row"><%= system['id'] %></th>
-	  <td><a href="/systems/<%= system['id'] %>/"><%= system['name'] %></td>
-	  <td><%= system['completion_count'] %> engineer<% if system['completion_count'] != 1 %>s<% end %></td>
-	  <td>New</td>
-	</tr>
-	<% end %>
-      </tbody>
-    </table>
+    <%= systems_table %>
   </div>
 </div>

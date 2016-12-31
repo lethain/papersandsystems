@@ -53,6 +53,7 @@ get '/' do
   m = get_mysql
   cv = common_vars(m, "Systems")
   cv[:systems] = Systems.new(m).list
+  cv[:systems_table] = erb(:table_systems, :locals => cv, :layout=> nil)  
   erb :systems, :locals => cv
 end
 
@@ -63,15 +64,12 @@ get '/systems/:id/' do
   s = Systems.new(m)
   system = s.get('id', sid)
   if system
-    puts "system: #{system}"
     related_papers = []
     cv[:system] = system
     cv[:related_papers] = related_papers
     has_solved = nil
     cv[:has_solved] = has_solved
-
     erb system['template'].to_sym, :locals => cv
-
   else
     status 404
     body "No such system found."
@@ -97,11 +95,10 @@ get '/papers/:id/' do
   paper = p.get('id', pid)
   if paper
     cv = common_vars(m, "")
-    puts "read: #{pid}, #{cv[:user]['id']}"
     cv[:paper] = paper
     cv[:has_read] = UserPapers.new(m).has_read(cv[:user]['id'], pid)
-    related_systems = []
-    cv[:systems] = related_systems
+    cv[:systems] = SystemPapers.new(m).related_systems(pid)
+    cv[:systems_table] = erb(:table_systems, :locals => cv, :layout=> nil)
     cv[:rendered] = get_markdown.render(paper['description'])
     erb :paper, :locals => cv
   else
@@ -166,14 +163,14 @@ get '/admin/add-paper/' do
     erb :add, :locals => cv
   else
     status 403
-    body 'Must be logged in as an admin.'    
+    body 'Must be logged in as an admin.'
   end
 end
 
 post '/admin/add-paper/' do
   m = get_mysql
   cv = common_vars(m)
-  if cv[:user] and cv[:user]['is_admin']  
+  if cv[:user] and cv[:user]['is_admin']
     Papers.new(m).create(params['name'], params['link'], params['description'])
     redirect '/papers/'
   else
