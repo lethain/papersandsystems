@@ -37,11 +37,11 @@
 
 	  <% if user %>	  
 	  <% if user['avatar'] %>
-	  <a class="navbar-brand float-xs-right" href="https://github.com/settings/applications">	  
+	  <a class="navbar-brand float-xs-right" href="/logout/">
 	    <img class="d-inline-block align-top" height="30" width="30" src="<%= user['avatar'] %>">
 	  </a>
 	  <% else %>
-	  <a class="nav-item nav-link float-xs-right" href="https://github.com/settings/applications">
+	  <a class="nav-item nav-link float-xs-right" href="/logout/">
 	    Logged in as <%= user['login'] %>
 	  </a>
 	  <% end %>	    

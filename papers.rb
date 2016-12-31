@@ -55,6 +55,11 @@ get '/about/' do
   erb :about, :locals => cv
 end
 
+get '/logout/' do
+  session.clear
+  redirect '/'
+end
+
 get '/' do
   m = get_mysql
   cv = common_vars(m, "Systems")
