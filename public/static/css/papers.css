@@ -62,3 +62,8 @@ pre.card-pre {
 #runkit-submit {
     margin-bottom: -46px;
 }
+
+div.card.card-no-margin table {
+    margin-bottom: 0;
+
+}
