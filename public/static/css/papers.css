@@ -58,3 +58,7 @@ pre.card-pre {
 .text-center {
     text-align: center;
 }
+
+#runkit-submit {
+    margin-bottom: -46px;
+}
