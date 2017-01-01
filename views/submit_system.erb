@@ -26,16 +26,17 @@ curl --data-binary "@<%= system['id'] %>_output.txt" <%= domain %>/systems/<%= s
 require("request")
 var rp = require("request-promise")
 
+function consoleAll(title, txt) {
+    console.log(`${title}: ${txt.split("\n").join(", ")}`)
+}
+
 function solve(input) {
-    console.log("Input")
-    console.log(input)
-    output = []
-    input.split("\n").forEach(function(line) {
-        output.push(line);
-    });
-    console.log("Solution")
-    console.log(output)
-    return output.join("\n")
+    consoleAll("Input", input)
+    output = input.split("\n").map(line => {
+        return line * 2
+    }).join("\n")
+    consoleAll("Proposed Solution", output)
+    return output
 }
 
 async function download(sid) {
@@ -45,16 +46,18 @@ async function download(sid) {
 
 async function upload(sid, data, token) {
     var url = `https://systemsandpapers.com/systems/${sid}/output/?token=${token}`
-    var results = (await rp({uri: url, method: 'POST', body: data}))
-    console.log("Results")
-    console.log(results.split("\n"))
-    results
+    return (await rp({uri: url, method: 'POST', body: data})
+        .then(function(html) {
+            consoleAll("Success", html)
+        }).catch(function(error) {
+            msg = error.message.slice(4).replace("\\n", "\n")
+            consoleAll("Failure", msg)
+    }))
 }
 
 var pid = "<%= system['id'] %>"
 var token = "<%= upload_token %>"
-console.log("Results")
-await upload(pid, solve(await download(pid)), token)</div>
+await upload(pid, solve(await download(pid)), token))</div>
     </div>
   </div>
 </div>
