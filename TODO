@@ -1,0 +1,43 @@
+
+problem sets to add:
+
+- round robinning, draft is already prepared for that too
+- power of two (sketch is already in lamport directory)
+
+
+2. btree
+3. [draft] load balancing: round robin
+4. load balancing: fewest connections, also: pick two, choose lowest strategy
+5. ballooning memory under cgroups, etc
+6. merkle tree / hash tree
+7. request tracing
+8. consistent hashing
+9. distributed algorithms
+10 locks: read locks, write locks
+11. long leasing
+12. paxos
+13. raft
+14. swim
+15. buffering
+16. read through caching
+17. write through caching
+18. scheduling: bin packing
+19. scheduling: optimistic vs pesimistic scheduling
+20. append only log with compaction
+21. sstable design
+22. compaction
+23. redis protocol
+24. memcache protocol
+25. mongo wire format
+26. memcache slab allocation
+27. mmaping
+28. process versus thread
+29. non-blocking io: write a non-blocking scheduler
+30. synchronous replication
+31. asynchronous replication
+32. dynamo style multiple writes
+
+
+
+
+
