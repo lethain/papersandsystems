@@ -150,9 +150,11 @@ post '/systems/:id/output/' do
       system = s.get('id', sid)
       solution = File.open("solutions/#{system['template']}.out")
       errors = 0
+      lines = 0
       resp = ""
       for line in request.body
         sol_line = solution.gets
+        lines += 1
         if line == sol_line
           resp += "✓ #{line}"
         else
@@ -160,7 +162,7 @@ post '/systems/:id/output/' do
           errors += 1
         end
       end
-      if errors > 0
+      if errors > 0 or lines == 0
         resp += "\nSorry, that doesn't look quite right. We found #{errors} errors.\n"
         status 400
         body resp
