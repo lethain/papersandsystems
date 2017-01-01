@@ -1,0 +1,12 @@
+# /etc/systemd/system/papers.service
+[Unit]
+Description=Run Papers webserver using Unicorn
+
+[Service]
+User=papers
+PIDFile=/home/papers/unicorn.pid
+Restart=on-failure
+ExecStart=/bin/bash /home/papers/start.sh
+
+[Install]
+WantedBy=multi-user.target
