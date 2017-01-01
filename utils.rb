@@ -42,8 +42,11 @@ class PASModel
   end
 
   def run(sql)
-    results = @m.query(sql)
-    self.log(sql, results)
+    begin
+      results = @m.query(sql)
+    ensure
+      self.log(sql, results)
+    end
     results
   end
 

@@ -16,6 +16,8 @@ class UserSystems < PASModel
   end
 
   def mark_completed(user_id, systems)
+    return systems if systems.size == 0
+    
     sids = systems.map { |x| self.escape(x['id']) }
     sql = "SELECT system_id, ts FROM #{@table} WHERE user_id='#{user_id}' AND system_id IN (#{sids.join(',')})"
     res = self.run(sql)

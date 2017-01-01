@@ -16,6 +16,8 @@ class UserPapers < PASModel
   end
 
   def mark_read(user_id, papers)
+    return papers if papers.size == 0
+    
     pids = papers.map { |x| self.escape(x['id']) }
     sql = "SELECT paper_id, ts FROM #{@table} WHERE user_id='#{user_id}' AND paper_id IN (#{pids.join(',')})"
     res = self.run(sql)
