@@ -32,7 +32,8 @@ def get_markdown
 end
 
 def get_mysql
-  Mysql2::Client.new(:host => MYSQL_HOST, :username => MYSQL_USER, :password => MYSQL_PASS, :database => MYSQL_DB)
+  Mysql2::Client.new(:host => MYSQL_HOST, :username => MYSQL_USER, :password => MYSQL_PASS,
+                     :database => MYSQL_DB, :automatic_close => true)
 end
 
 def error_page(status_code, msg)
