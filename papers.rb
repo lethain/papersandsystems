@@ -107,6 +107,7 @@ get '/systems/:id/' do
       cv[:has_completed] = UserSystems.new(m).has_completed(uid, sid)
     end
     cv[:papers_table] = erb(:table_papers, :locals => cv, :layout=> nil)
+    cv[:submit_fragment] = erb(:submit_system, :locals => cv, :layout => nil)
     erb "systems/#{system['template']}".to_sym, :locals => cv
   else
     error_page(404, "No such system found.")
@@ -202,7 +203,12 @@ get '/papers/:id/' do
   if paper
     cv = common_vars(m, "")
     cv[:paper] = paper
-    cv[:has_read] = UserPapers.new(m).has_read(cv[:user]['id'], pid)
+    if cv[:user]
+      cv[:has_read] = UserPapers.new(m).has_read(cv[:user]['id'], pid)
+    else
+      cv[:has_read] = nil
+    end
+      
     cv[:systems] = SystemPapers.new(m).related_systems(pid)
     cv[:systems_table] = erb(:table_systems, :locals => cv, :layout=> nil)
     cv[:rendered] = get_markdown.render(paper['description'])

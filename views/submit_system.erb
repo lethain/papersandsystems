@@ -1,0 +1,43 @@
+<% if user %>
+<div class="row">
+  <% if has_completed %>
+  <div class="col-sm-12">
+    <div class="card card-block">
+      <p class="card-text text-center">You already completed this system on <%= has_completed.strftime("%B %-d, %Y") %>!</p>
+    </div>
+  </div>
+</div>
+<% end %>
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card">
+      <h6 class="card-header">Submit via CLI</h6>
+      <pre class="card-pre">curl <%= domain %>/systems/<%= system['id'] %>/input/ > <%= system['id'] %>_input.txt
+python your_script.py &lt; <%= system['id'] %>_input.txt &gt; <%= system['id'] %>_output.txt
+curl --data-binary "@<%= system['id'] %>_output.txt" <%= domain %>/systems/<%= system['id'] %>/output/?token=<%= upload_token %></pre>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card">
+      <h6 class="card-header">Submit via RunKit</h6>
+      <div id="runkit-submit">
+	var request = require("request");
+	var handle = function(error, response, body) {
+	console.log([error, response, body]);
+	}
+	var resp = (await request("<%= domain %>/systems/<%= system['id'] %>/input/")");
+	handle(resp);</div>
+    </div>
+  </div>
+</div>
+<% else %>
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card card-block">
+      <p class="card-text text-center">You'll need to <a href="/login/">log in</a> to submit solutions.</p>
+    </div>
+  </div>
+</div>
+<% end %>
