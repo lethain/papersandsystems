@@ -30,7 +30,7 @@ end
 
 def error_page(status_code, msg)
   status status_code
-  m = get_mysql  
+  m = get_mysql
   cv = common_vars(m, status_code.to_s)
   cv[:status_code] = status_code
   cv[:error_msg] = msg
@@ -85,7 +85,7 @@ get '/' do
   cv[:systems] = Systems.new(m).list(:cols => ['id', 'name', 'completion_count'])
   if cv[:user]
     cv[:systems] = UserSystems.new(m).mark_completed(cv[:user]['id'], cv[:systems])
-  end  
+  end
   cv[:systems_table] = erb(:table_systems, :locals => cv, :layout=> nil)
   erb :systems, :locals => cv
 end
@@ -158,7 +158,7 @@ post '/systems/:id/output/' do
         body resp
       else
         resp += "\nExcellent, that looks correct!\n"
-        uss = UserSystems.new(m)        
+        uss = UserSystems.new(m)
         already_solved = uss.has_completed(uid, sid)
         if already_solved
           resp += "You've already solved this problem.\n"
@@ -251,7 +251,7 @@ get '/admin/users/' do
     cv[:users] = Users.new(m).list
     erb :users, :locals => cv
   else
-    error_page(403, 'Must be logged in as an admin.')    
+    error_page(403, 'Must be logged in as an admin.')
   end
 end
 
@@ -262,7 +262,7 @@ get '/admin/add-paper/' do
   if cv[:user] and cv[:user]['is_admin']
     erb :add, :locals => cv
   else
-    error_page(403, 'Must be logged in as an admin.')    
+    error_page(403, 'Must be logged in as an admin.')
   end
 end
 
@@ -283,7 +283,7 @@ get '/admin/add-system/' do
   if cv[:user] and cv[:user]['is_admin']
     erb :add_system, :locals => cv
   else
-    error_page(403, 'Must be logged in as an admin.')    
+    error_page(403, 'Must be logged in as an admin.')
   end
 end
 
@@ -294,7 +294,7 @@ post '/admin/add-system/' do
     Systems.new(get_mysql).create(params['name'], params['template'])
     redirect '/'
   else
-    error_page(403, 'Must be logged in as an admin.')    
+    error_page(403, 'Must be logged in as an admin.')
   end
 end
 
@@ -305,7 +305,7 @@ get '/admin/associate/' do
     cv[:systems] = Systems.new(m).list
     erb :associate_papers, :locals => cv
   else
-    error_page(403, 'Must be logged in as an admin.')    
+    error_page(403, 'Must be logged in as an admin.')
   end
 end
 
@@ -318,7 +318,7 @@ post '/admin/associate/' do
     SystemPapers.new(m).bulk_create(paper_id, system_ids)
     redirect "/papers/#{paper_id}/"
   else
-    error_page(403, 'Must be logged in as an admin.')    
+    error_page(403, 'Must be logged in as an admin.')
   end
 end
 
