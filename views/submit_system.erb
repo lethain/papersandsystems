@@ -1,6 +1,6 @@
 <% if user %>
+<% if has_completed %>
 <div class="row">
-  <% if has_completed %>
   <div class="col-sm-12">
     <div class="card card-block">
       <p class="card-text text-center">You already completed this system on <%= has_completed.strftime("%B %-d, %Y") %>!</p>
