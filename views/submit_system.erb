@@ -23,12 +23,33 @@ curl --data-binary "@<%= system['id'] %>_output.txt" <%= domain %>/systems/<%= s
     <div class="card">
       <h6 class="card-header">Submit via RunKit</h6>
       <div id="runkit-submit">
-	var request = require("request");
-	var handle = function(error, response, body) {
-	console.log([error, response, body]);
-	}
-	var resp = (await request("<%= domain %>/systems/<%= system['id'] %>/input/")");
-	handle(resp);</div>
+require("request")
+var rp = require("request-promise")
+
+function solve(input) {
+    console.log(input)
+    output = []
+    input.split("\n").forEach(function(line) {
+        output.push(line);
+    });
+    joined = output.join("\n")
+    console.log(joined)
+    return joined
+}
+
+async function download(sid) {
+    var url = "https://systemsandpapers.com/systems/"+sid+"/input/"
+    return (await rp(url))
+}
+
+async function upload(sid, data, token) {
+    var url = "https://systemsandpapers.com/systems/"+sid+"/output/"
+    return (await rp({qs: {token: token}, uri: url, method: 'POST', body: data}))
+}
+
+var pid = "<%= system['id'] %>"
+var token = "<%= upload_token %>"
+await upload(pid, solve(await download(pid)), token)</div>
     </div>
   </div>
 </div>
