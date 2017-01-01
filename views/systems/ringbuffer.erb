@@ -1,0 +1,179 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<h2 class="card-title"><%= system['name'] %></h2>
+	<h6 class="card-subtitle text-muted">
+	  Added on <%= system['ts'].strftime("%B %-d, %Y") %> and completed <%= system['completion_count'] %> time<% if system['completion_count'] != 1 %>s<% end %>.
+	  <% if user and has_completed %>
+	  You completed this system on <%= has_completed.strftime("%B %-d, %Y") %>.
+	  <% end %>
+	</h6>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  One particularly desirable property for systems we design is that they
+	  consume a predictable quantity of resources. In this day and age, it is
+	  still common for engineers to be woken from their sweet dreams by an alert
+	  informing them logs have suddenly consumed the majority of the disk space
+	  on one of their servers.
+	</p>   
+	<p class="card-text">
+In the fight for predictability, ring buffers are an interesting data structure
+which allow us to use a fixed amount of memory, and which are frequently used for
+storing time series data. In short, a ring buffer is a datastructure which wraps
+around when it reaches its end, always maintaining a fixed size, and prefers to
+overwrite earlier data instead of extending itself.
+	</p>   
+	<p class="card-text">
+
+Let's imagine we are relying on ring buffer to store `n`, number of requests
+over each second to one of our services for the last `k` seconds, and each second we write a number of
+requests. There are two operations we  an perform:
+	</p>   
+	<p>
+	    <code>write(n, t)</code> will add a new entry for the number of requests at time `t`.
+	    This operation should never fail. If the buffer is full, then
+	    it should loop around the buffer.
+	</p>
+	<p>
+	    <code>read(t)</code> should return the number of requests per second at time `t`,
+	    and should return -1 if a value is not stored for for time `t`,
+	    (for example, if that time is too far in the past and has already been
+	    lost).
+	</p>
+	<p class="card-text">
+	  Taking a simple case, a program would take these inputs over stdin:
+	</p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Input</h6>
+	<pre class="card-pre">10
+r 0
+w 10 1
+w 5 2
+r 1
+r 2
+r 3</pre>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Output</h6>
+	<pre class="card-pre"># no output, this is 'k', the size of buffer
+0 -1
+# no output
+# no output
+1 20
+2 5	  
+3 -1</pre>
+      </div>
+    </div>    
+  </div>    
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  Then getting a bit trickier, consider this:
+	</p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Input</h6>
+	<pre class="card-pre">w 4 8
+r 3
+r 4</pre>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Output</h6>
+	<pre class="card-pre"># no output
+3 0	  
+4 8</pre>
+      </div>
+    </div>    
+  </div>    
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  Although you never wrote a value for <code>t=3</code>, because you wrote a value at
+	  a later point in time, you know that there was no traffic until that point
+	  (in this problem, where we are operating in a world without race conditions)!	  
+	  Pushing your implementation a bit further, taking this input:
+	</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Input</h6>
+	<pre class="card-pre">10
+r 0
+r 10
+r 100
+w 1 3
+w 2 5
+w 3 7
+r 2
+r 4
+w 10 11
+r 5
+r 9
+r 10
+r 1
+w 11 13
+r 11
+r 1
+w 50 17
+r 11
+r 49
+r 50</pre>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Output</h6>
+	<pre class="card-pre">no idea... something
+</pre>
+      </div>
+    </div>    
+  </div>    
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  If your implementation worked correctly, then you're
+	  definitely ready to validate your solution!
+	</p>
+      </div>
+    </div>
+  </div>    
+
+  <%= submit_fragment %>
+  
+  <% if papers.size > 0 %>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-no-margin">
+	<h6 class="card-header">Related papers</h6>
+	<%= papers_table %>
+      </div>
+    </div>
+  </div>
+  <% end %>
+</div>

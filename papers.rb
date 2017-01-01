@@ -208,7 +208,6 @@ get '/papers/:id/' do
     else
       cv[:has_read] = nil
     end
-      
     cv[:systems] = SystemPapers.new(m).related_systems(pid)
     cv[:systems_table] = erb(:table_systems, :locals => cv, :layout=> nil)
     cv[:rendered] = get_markdown.render(paper['description'])
