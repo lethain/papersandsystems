@@ -18,6 +18,7 @@ prod:
 	    MYSQL_DB=papers \
 	    MEMCACHE_HOSTS=pas-cache.tdeexh.0001.use1.cache.amazonaws.com \
 	    DOMAIN=https://systemsandpapers.com \
+	    RACK_ENV=production \
 	bundle exec rackup
 
 mysql:
