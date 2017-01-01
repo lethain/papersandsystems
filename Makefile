@@ -19,7 +19,7 @@ prod:
 	    MEMCACHE_HOSTS=pas-cache.tdeexh.0001.use1.cache.amazonaws.com \
 	    DOMAIN=https://systemsandpapers.com \
 	    RACK_ENV=production \
-	bundle exec rackup
+	bundler exec unicorn -c unicorn.rb
 
 mysql:
 	mysql.server start
