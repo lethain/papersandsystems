@@ -14,10 +14,17 @@ require 'redcarpet'
 
 CLIENT_ID = ENV['GH_BASIC_CLIENT_ID']
 CLIENT_SECRET = ENV['GH_BASIC_SECRET_ID']
+MYSQL_HOST = ENV['MYSQL_HOST']
+MYSQL_USER = ENV['MYSQL_USER']
+MYSQL_PASS = ENV['MYSQL_PASS']
+MYSQL_DB = ENV['MYSQL_DB']
+MEMCACHE_HOSTS = ENV['MEMCACHE_HOSTS']
+DOMAIN = ENV['DOMAIN']
+
 
 configure do
   set :erb, :format => :html5
-  use Rack::Session::Dalli, cache: Dalli::Client.new('127.0.0.1:11211')
+  use Rack::Session::Dalli, cache: Dalli::Client.new(MEMCACHE_HOSTS)
 end
 
 def get_markdown
@@ -25,7 +32,7 @@ def get_markdown
 end
 
 def get_mysql
-  Mysql2::Client.new(:host => "localhost", :username => "root", :database => "papers")
+  Mysql2::Client.new(:host => MYSQL_HOST, :username => MYSQL_USER, :password => MYSQL_PASS, :database => MYSQL_DB)
 end
 
 def error_page(status_code, msg)
@@ -51,7 +58,7 @@ def common_vars(m, title=nil)
   access_token = authenticated?
   system_count, paper_count = get_counts(m)
   {
-    :domain => 'http://localhost:9292',
+    :domain => DOMAIN,
     :title => title,
     :user => Users.new(m).get_by_token(access_token),
     :access_token => access_token,
