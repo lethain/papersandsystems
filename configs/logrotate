@@ -1,0 +1,10 @@
+# /etc/logrotate.d/papers
+/home/papers/papers_unicorn.err {
+  daily
+  missingok
+  rotate14
+  compress
+  delaycompress
+  notifempt
+  create 0640 papers adm
+}
