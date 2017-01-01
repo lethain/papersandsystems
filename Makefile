@@ -12,11 +12,11 @@ run:
 prod:
 	env GH_BASIC_CLIENT_ID=c76ce9793829d5c6205a \
 	    GH_BASIC_SECRET_ID=ea2ca8f0bc3846764a185a544779483d1b719a95 \
-	    MYSQL_HOST=localhost \
-	    MYSQL_USER=root \
-	    MYSQL_PASS= \
+	    MYSQL_HOST=papers.cy1f2twxhxca.us-east-1.rds.amazonaws.com  \
+	    MYSQL_USER=service \
+	    MYSQL_PASS=TJJxAQcjqnzucBfsYXPq7QG \
 	    MYSQL_DB=papers \
-	    MEMCACHE_HOSTS=127.0.0.1:11211 \
+	    MEMCACHE_HOSTS=pas-cache.tdeexh.0001.use1.cache.amazonaws.com \
 	    DOMAIN=https://systemsandpapers.com \
 	bundle exec rackup
 
