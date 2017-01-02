@@ -3,10 +3,10 @@
     <tr>
       <th>#</th>
       <th>Name</th>
-      <th>Year</th>      
-      <th>Topic</th>      
+      <th>Year</th>
+      <th>Topic</th>
       <th>Rating</th>
-      <th>Status</th>
+      <th>Readers</th>
     </tr>
   </thead>
   <tbody>
@@ -15,9 +15,9 @@
       <th scope="row"><%= paper['id'] %></th>
       <td><a href="/papers/<%= paper['id'] %>/"><%= paper['name'] %></a></td>
       <td><%= paper['year'] %></td>
-      <td><%= paper['topic'] %></td>      
-      <td><%= paper['rating'] %> (<%= paper['read_count'] %> reader<% if paper['read_count'] != 1 %>s<% end %>)</td>
-      <td><% if paper['user_has_read'] %>Read on <%= paper['user_has_read'].strftime("%B %-d, %Y") %><% else %>New<% end %></td>
+      <td><%= paper['topic'] %></td>
+      <td><%= '★' * paper['rating'].to_i %></td>
+      <td><%= paper['read_count'] %> reader<% if paper['read_count'] != 1 %>s<% end %><% if paper['user_has_read'] %>, including you<% end %>.</td>
     </tr>
     <% end %>
   </tbody>

@@ -116,11 +116,7 @@ class PASModel
   end
 
   def escape(val)
-    if val.is_a? Integer
-      val
-    else
-      @m.escape(val)
-    end
+    (val.is_a? String) ? @m.escape(val) : val
   end
 
   def standard(s)

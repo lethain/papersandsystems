@@ -231,13 +231,24 @@ get '/papers/:id/read' do
   m = get_mysql
   pid = params[:id]
   cv = common_vars(m, nil)
+  if not params[:rating]
+    return error_page(400, "Must supply 'rating' parameter.")
+  end
+  rating = params[:rating].to_i
+  if rating < 1 or rating > 5
+    return error_page(400, "Rating must be between 1 and 5, inclusive.")
+  end
+
   if cv[:user]
     uid = cv[:user]['id']
     ups = UserPapers.new(m)
-    ups.create(uid, pid)
+    ups.create(uid, pid, rating)
     count = ups.user_count(uid)
+    avg = ups.rating(pid)
     Users.new(m).update(uid, :read_count => count)
-    Papers.new(m).incr(pid, 'read_count')
+    p = Papers.new(m)
+    p.incr(pid, 'read_count')
+    p.update(pid, :rating => avg)
     redirect "/papers/#{pid}/"
   else
     error_page(403, 'Must be logged in to mark paper as read.')
