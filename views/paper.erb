@@ -5,14 +5,21 @@
 	<div class="card-block">
 	  <h2 class="card-title"><a href="<%= paper['link'] %>"><%= paper['name'] %></a></h2>
 	  <h6 class="card-subtitle text-muted">
-	    Added on <%= paper['ts'].strftime("%B %-d, %Y") %>, and read <%= paper['read_count'] %> time<% if paper['read_count'] != 1 %>s<% end %>.
+	    Added on <%= paper['ts'].strftime("%B %-d, %Y") %>, and rated <%= paper['rating'] %>/5 by
+	    <%= paper['read_count'] %> reader<% if paper['read_count'] != 1 %>s<% end %>.
 	    <% if user %>
 	    <% if has_read %>
-	    You read this paper on <%= has_read.strftime("%B %-d, %Y") %>.
+	    You read this paper on <%= has_read.strftime("%B %-d, %Y") %>,
+	    and gave it <%= paper['rating'] %>/5 stars.
 	    <% else %>
-	    <a href="/papers/<%= paper['id'] %>/read" class="">Mark paper as read!</a>
+	    Rate this paper:
+	    <a href="/papers/<%= paper['id'] %>/read?stars=1">★☆☆☆☆</a>,
+	    <a href="/papers/<%= paper['id'] %>/read?stars=2">★★☆☆☆</a>,
+	    <a href="/papers/<%= paper['id'] %>/read?stars=3">★★★☆☆</a>,
+	    <a href="/papers/<%= paper['id'] %>/read?stars=4">★★★★☆</a>,
+	    <a href="/papers/<%= paper['id'] %>/read?stars=5">★★★★★</a>.
 	    <% end %>
-	    <% end %>
+	  <% end %>
 	  </h6>
 	</div>
       </div>
