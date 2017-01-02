@@ -12,7 +12,7 @@
   <tbody>
     <% papers.each do |paper| %>
     <tr>
-      <th scope="row"><%= paper['id'] %></th>
+      <th scope="row"><%= paper['pos'] %></th>
       <td><a href="/papers/<%= paper['id'] %>/"><%= paper['name'] %></a></td>
       <td><%= paper['year'] %></td>
       <td><%= paper['topic'] %></td>

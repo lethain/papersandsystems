@@ -3,6 +3,7 @@ require 'openssl'
 require 'digest/sha1'
 require 'base64'
 require 'cgi'
+require 'securerandom'
 
 UPLOAD_TOKEN_KEY = 'ad5b5ecb30391fb29294891f6b5e4cf6685fae26'
 UPLOAD_TOKEN_IV = "yz\xF5\xCB\x0E\xB8\xE7\xD5'\x80h\x85Q\xCD)\x18"
@@ -109,6 +110,10 @@ class PASModel
     else
       0
     end
+  end
+
+  def uuid
+    SecureRandom.uuid
   end
 
   def log(sql, results)

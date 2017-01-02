@@ -31,7 +31,9 @@ class UserPapers < PASModel
     return papers if papers.size == 0
     
     pids = papers.map { |x| self.escape(x['id']) }
-    sql = "SELECT paper_id, ts FROM #{@table} WHERE user_id='#{user_id}' AND paper_id IN (#{pids.join(',')})"
+    as_str = pids.map { |x| "'#{x}'" }
+    as_str = as_str.join(',')    
+    sql = "SELECT paper_id, ts FROM #{@table} WHERE user_id='#{user_id}' AND paper_id IN (#{as_str})"
     res = self.run(sql)
     ts = {}
     res.each do |row|

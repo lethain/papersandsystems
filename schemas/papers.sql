@@ -1,7 +1,8 @@
 CREATE DATABASE IF NOT EXISTS papers;
 USE papers;
 CREATE TABLE IF NOT EXISTS papers(
-       id INT(11) NOT NULL AUTO_INCREMENT,
+       id VARCHAR(36) NOT NULL,
+       pos INT(11) DEFAULT 0,
        name VARCHAR(255),
        link VARCHAR(255),
        description TEXT,
@@ -12,5 +13,6 @@ CREATE TABLE IF NOT EXISTS papers(
        topic VARCHAR(255),
        PRIMARY KEY (id)
 ) engine=InnoDB;
-CREATE INDEX trindex on papers (topic, rating);
-CREATE INDEX rindex on papers (rating);
+CREATE INDEX pindex on papers (pos);
+CREATE INDEX trindex on papers (topic, rating, pos);
+CREATE INDEX rindex on papers (rating, pos);

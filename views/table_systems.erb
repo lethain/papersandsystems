@@ -10,7 +10,7 @@
   <tbody>
     <% systems.each do |system| %>
     <tr>
-      <th scope="row"><%= system['id'] %></th>
+      <th scope="row"><%= system['pos'] %></th>
       <td><a href="/systems/<%= system['id'] %>/"><%= system['name'] %></td>
       <td><%= system['completion_count'] %> engineer<% if system['completion_count'] != 1 %>s<% end %></td>
       <td><% if system['user_has_completed'] %>Completed on <%= system['user_has_completed'].strftime("%B %-d, %Y") %><% else %>New<% end %></td>

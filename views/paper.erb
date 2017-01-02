@@ -3,7 +3,7 @@
     <div class="col-sm-12">
       <div class="card">
 	<div class="card-block">
-	  <h2 class="card-title"><a href="<%= paper['link'] %>"><%= paper['name'] %></a></h2>
+	  <h2 class="card-title"><a href="<%= paper['link'] %>" target="_blank"><%= paper['name'] %></a></h2>
 	  <h6 class="card-subtitle text-muted">
 	    Added on <%= paper['ts'].strftime("%B %-d, %Y") %>, and rated <%= '★' * paper['rating'].to_i %> by
 	    <%= paper['read_count'] %> reader<% if paper['read_count'] != 1 %>s<% end %>.

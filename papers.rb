@@ -12,6 +12,7 @@ require 'dalli'
 require 'rack/session/dalli'
 require 'redcarpet'
 
+
 CLIENT_ID = ENV['GH_BASIC_CLIENT_ID']
 CLIENT_SECRET = ENV['GH_BASIC_SECRET_ID']
 MYSQL_HOST = ENV['MYSQL_HOST']
@@ -90,7 +91,7 @@ end
 get '/' do
   m = get_mysql
   cv = common_vars(m, "Systems")
-  cv[:systems] = Systems.new(m).list(:cols => ['id', 'name', 'completion_count'])
+  cv[:systems] = Systems.new(m).list(:cols => ['pos', 'id', 'name', 'completion_count'])
   if cv[:user]
     cv[:systems] = UserSystems.new(m).mark_completed(cv[:user]['id'], cv[:systems])
   end
@@ -196,7 +197,7 @@ end
 get '/papers/' do
   m = get_mysql
   cv = common_vars(m, "Papers")
-  papers = Papers.new(m).list(:cols => ['id', 'name', 'read_count', 'topic', 'rating', 'year'])
+  papers = Papers.new(m).list(:cols => ['pos', 'id', 'name', 'read_count', 'topic', 'rating', 'year'])
   if cv[:user]
     papers = UserPapers.new(m).mark_read(cv[:user]['id'], papers)
   end
@@ -238,7 +239,6 @@ get '/papers/:id/read' do
   if rating < 1 or rating > 5
     return error_page(400, "Rating must be between 1 and 5, inclusive.")
   end
-
   if cv[:user]
     uid = cv[:user]['id']
     ups = UserPapers.new(m)

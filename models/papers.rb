@@ -8,8 +8,10 @@ class Papers < PASModel
   end
 
   def create(name, link, description, topic, year)
+    id = self.uuid
+    pos = self.count() + 1    
     name, link, description = [name, link, description, topic, year].map { |x| self.escape(x) }
-    sql = "INSERT INTO #{@table} (name, link, description, topic, year) VALUES ('#{name}', '#{link}', '#{description}', '#{topic}', '#{year}')"
+    sql = "INSERT INTO #{@table} (id, pos, name, link, description, topic, year) VALUES ('#{id}', '#{pos}', '#{name}', '#{link}', '#{description}', '#{topic}', '#{year}')"
     self.run(sql)
   end
 end

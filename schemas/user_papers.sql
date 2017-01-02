@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS papers;
 USE papers;
 CREATE TABLE IF NOT EXISTS user_papers(
        id INT(11) NOT NULL AUTO_INCREMENT,
-       paper_id INT(11),
+       paper_id VARCHAR(36),
        user_id INT(11),
        ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
        rating TINYINT DEFAULT 0,
