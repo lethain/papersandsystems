@@ -5,7 +5,11 @@
       <div class="form-group row">
 	<label for="paper_id" class="col-xs-2 col-form-label">Paper Id</label>
 	<div class="col-xs-10">
-	  <input class="form-control" name="paper_id" id="paper_id" type="text" value="">
+	  <select class="form-control" id="paper_id" name="paper_id">
+	    <% papers.each do |paper| %>
+	    <option value="<%= paper['id'] %>"><%= paper['name'] %></option>
+	    <% end %>
+	  </select>
 	</div>
       </div>
       <div class="form-group row">

@@ -328,7 +328,8 @@ get '/admin/associate/' do
   m = get_mysql
   cv = common_vars(m, "Associate Systems With Paper")
   if cv[:user] and cv[:user]['is_admin']
-    cv[:systems] = Systems.new(m).list
+    cv[:papers] = Papers.new(m).list(:cols => ['id', 'name'])
+    cv[:systems] = Systems.new(m).list(:cols => ['id', 'name'])
     erb :associate_papers, :locals => cv
   else
     error_page(403, 'Must be logged in as an admin.')
