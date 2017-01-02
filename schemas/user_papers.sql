@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS user_papers(
        paper_id INT(11),
        user_id INT(11),
        ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       rating TINYINT DEFAULT 0,
        PRIMARY KEY (id),
        UNIQUE (paper_id, user_id)
 ) engine=InnoDB;

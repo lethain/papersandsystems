@@ -7,9 +7,9 @@ class Papers < PASModel
     super(mysql, 'papers')
   end
 
-  def create(name, link, description)
-    name, link, description = [name, link, description].map { |x| self.escape(x) }
-    sql = "INSERT INTO #{@table} (name, link, description) VALUES ('#{name}', '#{link}', '#{description}')"
+  def create(name, link, description, topic, year)
+    name, link, description = [name, link, description, topic, year].map { |x| self.escape(x) }
+    sql = "INSERT INTO #{@table} (name, link, description, topic, year) VALUES ('#{name}', '#{link}', '#{description}', '#{topic}', '#{year}')"
     self.run(sql)
   end
 end

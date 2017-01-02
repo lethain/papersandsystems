@@ -18,7 +18,7 @@ class SystemPapers < PASModel
 
   def related_papers(system_id)
     system_id = self.escape(system_id)
-    sql = "SELECT papers.id, papers.name, papers.read_count FROM system_papers JOIN papers ON papers.id=system_papers.paper_id WHERE system_id='#{system_id}' ORDER BY papers.id"
+    sql = "SELECT papers.id, papers.name, papers.read_count, papers.topic, papers.rating, papers.year FROM system_papers JOIN papers ON papers.id=system_papers.paper_id WHERE system_id='#{system_id}' ORDER BY papers.id"
     self.run(sql)
   end
 

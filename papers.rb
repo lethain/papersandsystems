@@ -196,7 +196,7 @@ end
 get '/papers/' do
   m = get_mysql
   cv = common_vars(m, "Papers")
-  papers = Papers.new(m).list(:cols => ['id', 'name', 'read_count'])
+  papers = Papers.new(m).list(:cols => ['id', 'name', 'read_count', 'topic', 'rating', 'year'])
   if cv[:user]
     papers = UserPapers.new(m).mark_read(cv[:user]['id'], papers)
   end
@@ -285,7 +285,7 @@ post '/admin/add-paper/' do
   m = get_mysql
   cv = common_vars(m)
   if cv[:user] and cv[:user]['is_admin']
-    Papers.new(m).create(params['name'], params['link'], params['description'])
+    Papers.new(m).create(params['name'], params['link'], params['description'], params['topic'], params['year'])
     redirect '/papers/'
   else
     error_page(403, 'Must be logged in as an admin.')
