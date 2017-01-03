@@ -65,5 +65,15 @@ pre.card-pre {
 
 div.card.card-no-margin table {
     margin-bottom: 0;
-
 }
+
+blockquote {
+    background: #fafafa;    
+    margin: 1.5em 10px;
+    padding: 0.5em 10px;
+}
+
+blockquote p {
+    margin-bottom: 0;
+}
+
