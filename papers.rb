@@ -230,7 +230,7 @@ get '/papers/:id/' do
     p = Papers.new(m)
     paper = p.get('id', pid)
     if paper
-      cv = common_vars(m, "")
+      cv = common_vars(m, paper['name'])
       cv[:paper] = paper
       if cv[:user]
         cv[:has_read] = UserPapers.new(m).has_read(cv[:user]['id'], pid)
