@@ -116,10 +116,11 @@ end
 get '/systems/:id/' do
   sid = params[:id]
   with_mysql do |m|
-    cv = common_vars(m, "Papers")
+
     s = Systems.new(m)
     system = s.get('id', sid)
     if system
+      cv = common_vars(m, system['name'])
       related_papers = []
       cv[:system] = system
       cv[:papers] = SystemPapers.new(m).related_papers(sid)
