@@ -91,7 +91,7 @@ end
 get '/' do
   m = get_mysql
   cv = common_vars(m, "Systems")
-  cv[:systems] = Systems.new(m).list(:cols => ['pos', 'id', 'name', 'completion_count'])
+  cv[:systems] = Systems.new(m).list(:sort => 'pos', :cols => ['pos', 'id', 'name', 'completion_count'])
   if cv[:user]
     cv[:systems] = UserSystems.new(m).mark_completed(cv[:user]['id'], cv[:systems])
   end
@@ -197,7 +197,7 @@ end
 get '/papers/' do
   m = get_mysql
   cv = common_vars(m, "Papers")
-  papers = Papers.new(m).list(:cols => ['pos', 'id', 'name', 'read_count', 'topic', 'rating', 'year'])
+  papers = Papers.new(m).list(:sort => 'pos', :cols => ['pos', 'id', 'name', 'read_count', 'topic', 'rating', 'year'])
   if cv[:user]
     papers = UserPapers.new(m).mark_read(cv[:user]['id'], papers)
   end
@@ -228,10 +228,45 @@ get '/papers/:id/' do
   end
 end
 
-get '/papers/:id/read' do
+get '/papers/:id/edit/' do
   m = get_mysql
   pid = params[:id]
-  cv = common_vars(m, nil)
+  cv = common_vars(m, 'Edit Paper')
+  if cv[:user] and cv[:user]['is_admin']
+    cv[:paper] = Papers.new(m).get('id', pid)
+    erb :edit_paper, :locals => cv
+  else
+    error_page(403, 'Must be logged in as admin to edit paper.')
+  end
+end
+
+post '/papers/:id/edit/' do
+  m = get_mysql
+  pid = params[:id]
+  cv = common_vars(m)
+  if cv[:user] and cv[:user]['is_admin']
+    p = Papers.new(m)
+    paper = p.get('id', pid)
+    updates = {
+      :name => params['name'],
+      :pos => params['pos'],
+      :link => params['link'],
+      :description => params['description'],
+      :topic => params['topic'],
+      :year => params['year']
+    }
+    p.update(pid, updates)
+    redirect "/papers/#{pid}/"
+  else
+    error_page(403, 'Must be logged in as admin to edit paper.')
+  end
+end
+
+
+get '/papers/:id/read/' do
+  m = get_mysql
+  pid = params[:id]
+  cv = common_vars(m)
   if not params[:rating]
     return error_page(400, "Must supply 'rating' parameter.")
   end

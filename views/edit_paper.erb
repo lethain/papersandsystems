@@ -1,0 +1,57 @@
+<div class="container">
+  <div class="col-sm-12">
+    <h2>Edit paper</h2>
+    <form method="post">
+      <div class="form-group row">
+	<label for="example-url-input" class="col-xs-2 col-form-label">UUID</label>
+	<div class="col-xs-10">
+	  <input class="form-control" name="id" id="id" type="text" value="<%= paper['id'] %>" disabled>
+	</div>
+      </div>
+      
+      <div class="form-group row">
+	<label for="example-url-input" class="col-xs-2 col-form-label">Position</label>
+	<div class="col-xs-10">
+	  <input class="form-control" name="pos" id="pos" type="number" value="<%= paper['pos'] %>">
+	</div>
+      </div>
+      
+      <div class="form-group row">
+	<label for="example-url-input" class="col-xs-2 col-form-label">URL</label>
+	<div class="col-xs-10">
+	  <input class="form-control" name="link" id="link" type="url" value="<%= paper['link'] %>">
+	</div>
+      </div>
+      
+      <div class="form-group row">
+	<label for="example-text-input" class="col-xs-2 col-form-label">Name</label>
+	<div class="col-xs-10">
+	  <input class="form-control" name="name" id="name" type="text" value="<%= paper['name'] %>">
+	</div>
+      </div>
+
+      <div class="form-group row">
+	<label for="example-text-input" class="col-xs-2 col-form-label">Topic</label>
+	<div class="col-xs-10">
+	  <input class="form-control" name="topic" id="topic" type="text" value="<%= paper['topic'] %>">
+	</div>
+      </div>
+
+      <div class="form-group row">
+	<label for="example-text-input" class="col-xs-2 col-form-label">Year</label>
+	<div class="col-xs-10">
+	  <input class="form-control" name="year" id="year" type="text" value="<%= paper['year'] %>">
+	</div>
+      </div>
+      
+      <div class="form-group row">
+	<label for="example-text-input" class="col-xs-2 col-form-label">Description</label>
+	<div class="col-xs-10">
+	  <textarea class="form-control" name="description" id="description" type="text"><%= paper['description'] %></textarea>
+	</div>
+      </div>      
+
+      <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+  </div>
+</div>

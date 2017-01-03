@@ -80,10 +80,9 @@ class PASModel
   end
 
   def update(id, kvs)
-    sql = "UPDATE #{@table} SET"
-    kvs.each_pair do |k, v|
-      sql += " #{k}='#{self.escape(v)}'"
-    end
+    sql = "UPDATE #{@table} SET "
+    updates = kvs.map { |k, v| "#{k}='#{self.escape(v)}'" }
+    sql += updates.join(", ")
     sql += " WHERE id='#{self.escape(id)}'"
     self.run(sql)
   end
@@ -117,7 +116,7 @@ class PASModel
   end
 
   def log(sql, results)
-    @log.info("'#{sql}', #{results.to_a}")
+    @log.debug("'#{sql}', #{results.to_a}")
   end
 
   def escape(val)

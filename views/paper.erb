@@ -12,13 +12,16 @@
 	    You read this paper on <%= has_read.strftime("%B %-d, %Y") %>.
 	    <% else %>
 	    Rate this paper:
-	    <a href="/papers/<%= paper['id'] %>/read?rating=1">★☆☆☆☆</a>,
-	    <a href="/papers/<%= paper['id'] %>/read?rating=2">★★☆☆☆</a>,
-	    <a href="/papers/<%= paper['id'] %>/read?rating=3">★★★☆☆</a>,
-	    <a href="/papers/<%= paper['id'] %>/read?rating=4">★★★★☆</a>,
-	    <a href="/papers/<%= paper['id'] %>/read?rating=5">★★★★★</a>.
+	    <a href="/papers/<%= paper['id'] %>/read/?rating=1">★☆☆☆☆</a>,
+	    <a href="/papers/<%= paper['id'] %>/read/?rating=2">★★☆☆☆</a>,
+	    <a href="/papers/<%= paper['id'] %>/read/?rating=3">★★★☆☆</a>,
+	    <a href="/papers/<%= paper['id'] %>/read/?rating=4">★★★★☆</a>,
+	    <a href="/papers/<%= paper['id'] %>/read/?rating=5">★★★★★</a>.
 	    <% end %>
-	  <% end %>
+	    <% end %>
+	    <% if user and user['is_admin'] == 1 %>
+	    <a href="/papers/<%= paper['id'] %>/edit/">Edit this paper.</a>
+	    <% end %>	    
 	  </h6>
 	</div>
       </div>
