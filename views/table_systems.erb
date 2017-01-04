@@ -3,8 +3,8 @@
     <tr>
       <th>#</th>
       <th>Name</th>
-      <th>Solved By</th>
-      <th>Status</th>
+      <th class="hidden-sm-down">Solved By</th>
+      <th class="hidden-sm-down">Status</th>
     </tr>
   </thead>
   <tbody>
@@ -12,8 +12,8 @@
     <tr>
       <th scope="row"><%= system['pos'] %></th>
       <td><a href="/systems/<%= system['id'] %>/"><%= system['name'] %></td>
-      <td><%= system['completion_count'] %> engineer<% if system['completion_count'] != 1 %>s<% end %></td>
-      <td><% if system['user_has_completed'] %>Completed on <%= system['user_has_completed'].strftime("%B %-d, %Y") %><% else %>New<% end %></td>
+      <td class="hidden-sm-down"><%= system['completion_count'] %> engineer<% if system['completion_count'] != 1 %>s<% end %></td>
+      <td class="hidden-sm-down"><% if system['user_has_completed'] %>Completed on <%= system['user_has_completed'].strftime("%B %-d, %Y") %><% else %>New<% end %></td>
     </tr>
     <% end %>
   </tbody>

@@ -3,10 +3,10 @@
     <tr>
       <th>#</th>
       <th>Name</th>
-      <th>Year</th>
-      <th>Topic</th>
+      <th class="hidden-sm-down">Year</th>
+      <th class="hidden-sm-down">Topic</th>
       <th>Rating</th>
-      <th>Readers</th>
+      <th class="hidden-sm-down">Readers</th>
     </tr>
   </thead>
   <tbody>
@@ -14,10 +14,10 @@
     <tr>
       <th scope="row"><%= paper['pos'] %></th>
       <td><a href="/papers/<%= paper['id'] %>/"><%= paper['name'] %></a></td>
-      <td><%= paper['year'] %></td>
-      <td><%= paper['topic'] %></td>
+      <td class="hidden-sm-down"><%= paper['year'] %></td>
+      <td class="hidden-sm-down"><%= paper['topic'] %></td>
       <td><%= '★' * paper['rating'].to_i %></td>
-      <td><%= paper['read_count'] %> reader<% if paper['read_count'] != 1 %>s<% end %><% if paper['user_has_read'] %>, including you<% end %>.</td>
+      <td class="hidden-sm-down"><%= paper['read_count'] %> reader<% if paper['read_count'] != 1 %>s<% end %><% if paper['user_has_read'] %>, including you<% end %>.</td>
     </tr>
     <% end %>
   </tbody>
