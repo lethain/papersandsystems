@@ -13,13 +13,13 @@ def get_logger
   Logger.new(STDERR)
 end
 
-def upload_token(uid, sid)
+def upload_token(uid)
   ts = Time.now.to_i
   cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
   cipher.encrypt
   cipher.key = UPLOAD_TOKEN_KEY
   cipher.iv = UPLOAD_TOKEN_IV
-  encrypted = cipher.update("#{uid},#{sid},#{ts}")
+  encrypted = cipher.update("#{uid},#{ts}")
   encrypted << cipher.final
   CGI.escape(Base64.encode64(encrypted))
 end

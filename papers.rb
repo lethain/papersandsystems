@@ -126,7 +126,7 @@ get '/systems/:id/' do
       cv[:papers] = SystemPapers.new(m).related_papers(sid)
       if cv[:user]
         uid = cv[:user]['id']
-        cv[:upload_token] = upload_token(uid, sid)
+        cv[:upload_token] = upload_token(uid)
         cv[:papers] = UserPapers.new(m).mark_read(uid, cv[:papers])
         cv[:has_completed] = UserSystems.new(m).has_completed(uid, sid)
       end
@@ -156,55 +156,51 @@ end
 
 post '/systems/:id/output/' do
   token = params[:token]
+  sid = params[:id]
   if token
     begin
-      uid, sid, ts = decode_token(token.strip)
+      uid, ts = decode_token(token.strip)
     rescue
       status 403
       return body "Supplied 'token' could not be validated."
     end
-    if sid == params['id']
-      with_mysql do |m|
-        s = Systems.new(m)
-        system = s.get('id', sid)
-        solution = File.open("solutions/#{system['template']}.out")
-        errors = 0
-        lines = 0
-        resp = ""
-        for line in request.body
-          sol_line = solution.gets
-          lines += 1
-          if line == sol_line
-            resp += "✓ #{line}"
-          else
-            resp += "✗ #{line}"
-            errors += 1
-          end
-        end
-        if errors > 0 or lines == 0
-          resp += "\nSorry, that doesn't look quite right. We found #{errors} errors.\n"
-          status 400
-          body resp
+    with_mysql do |m|
+      s = Systems.new(m)
+      system = s.get('id', sid)
+      solution = File.open("solutions/#{system['template']}.out")
+      errors = 0
+      lines = 0
+      resp = ""
+      for line in request.body
+        sol_line = solution.gets
+        lines += 1
+        if line == sol_line
+          resp += "✓ #{line}"
         else
-          resp += "\nExcellent, that looks correct!\n"
-          uss = UserSystems.new(m)
-          already_solved = uss.has_completed(uid, sid)
-          if already_solved
-            resp += "You've already solved this problem.\n"
-          else
-            uss.create(uid, sid)
-            count = uss.user_count(uid)
-            Users.new(m).update(uid, :completion_count => count)
-            Systems.new(m).incr(sid, 'completion_count')
-            resp += "This is your first time solving this problem, congrats.\n"
-          end
-          status 200
-          body resp
+          resp += "✗ #{line}"
+          errors += 1
         end
       end
-    else
-      status 400
-      body "Supplied 'token' associated with system #{sid}, this is #{params['id']}."
+      if errors > 0 or lines == 0
+        resp += "\nSorry, that doesn't look quite right. We found #{errors} errors.\n"
+        status 400
+        body resp
+      else
+        resp += "\nExcellent, that looks correct!\n"
+        uss = UserSystems.new(m)
+        already_solved = uss.has_completed(uid, sid)
+        if already_solved
+          resp += "You've already solved this problem.\n"
+        else
+          uss.create(uid, sid)
+          count = uss.user_count(uid)
+          Users.new(m).update(uid, :completion_count => count)
+          Systems.new(m).incr(sid, 'completion_count')
+          resp += "This is your first time solving this problem, congrats.\n"
+        end
+        status 200
+        body resp
+      end
     end
   else
     status 403
