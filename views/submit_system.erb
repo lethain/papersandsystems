@@ -23,41 +23,16 @@ curl --data-binary "@<%= system['id'] %>_output.txt" <%= domain %>/systems/<%= s
     <div class="card">
       <h6 class="card-header">Submit via RunKit</h6>
       <div id="runkit-submit">
-require("request")
-var rp = require("request-promise")
-
-function consoleAll(title, txt) {
-    console.log(`${title}: ${txt.split("\n").join(", ")}`)
-}
+var sap = require("systemsandpapers")
+var sid = "<%= system['id'] %>"
+var token = "<%= upload_token %>"
 
 function solve(input) {
-    consoleAll("Input", input)
-    output = input.split("\n").map(line => {
-        return line * 2
-    }).join("\n")
-    consoleAll("Proposed Solution", output)
-    return output
-}
+    // change input into output somehow
+        return input
+	}
 
-async function download(sid) {
-    var url = `https://systemsandpapers.com/systems/${sid}/input/`
-    return (await rp(url))
-}
-
-async function upload(sid, data, token) {
-    var url = `https://systemsandpapers.com/systems/${sid}/output/?token=${token}`
-    return (await rp({uri: url, method: 'POST', body: data})
-        .then(function(html) {
-            consoleAll("Success", html)
-        }).catch(function(error) {
-            msg = error.message.slice(4).replace("\\n", "\n")
-            consoleAll("Failure", msg)
-    }))
-}
-
-var pid = "<%= system['id'] %>"
-var token = "<%= upload_token %>"
-await upload(pid, solve(await download(pid)), token)</div>
+sap.attempt(sid, token, solve)</div>
     </div>
   </div>
 </div>
