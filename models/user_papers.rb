@@ -12,7 +12,7 @@ class UserPapers < PASModel
   end
 
   def user_count(user_id)
-    self.count(:user_id => user_id)
+    self.count(:where => {:user_id => user_id})
   end
 
   def rating(pid)
