@@ -21,11 +21,11 @@ def upload_token(uid)
   cipher.iv = UPLOAD_TOKEN_IV
   encrypted = cipher.update("#{uid},#{ts}")
   encrypted << cipher.final
-  CGI.escape(Base64.encode64(encrypted))
+  CGI.escape(Base64.urlsafe_encode64(encrypted))
 end
 
 def decode_token(token)
-  token = Base64.decode64(CGI.unescape(token))
+  token = Base64.urlsafe_decode64(CGI.unescape(token))
   cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
   cipher.decrypt
   cipher.key = UPLOAD_TOKEN_KEY
