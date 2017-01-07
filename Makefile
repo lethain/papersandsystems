@@ -18,6 +18,7 @@ prod:
 	    MYSQL_DB=papers \
 	    MEMCACHE_HOSTS=pas-cache.tdeexh.0001.use1.cache.amazonaws.com \
 	    DOMAIN=https://systemsandpapers.com \
+	    GOOGLE_ANALYTICS_ID=UA-89952144-1 \
 	    RACK_ENV=production \
 	bundler exec unicorn -c unicorn.rb
 

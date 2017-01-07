@@ -21,6 +21,7 @@ MYSQL_PASS = ENV['MYSQL_PASS']
 MYSQL_DB = ENV['MYSQL_DB']
 MEMCACHE_HOSTS = ENV['MEMCACHE_HOSTS']
 DOMAIN = ENV['DOMAIN']
+GOOGLE_ANALYTICS_ID = ENV['GOOGLE_ANALYTICS_ID']
 
 
 configure do
@@ -73,6 +74,7 @@ def common_vars(m, title=nil)
   system_count, paper_count = get_counts(m)
   {
     :domain => DOMAIN,
+    :ga_id => GOOGLE_ANALYTICS_ID,
     :title => title,
     :user => Users.new(m).get_by_token(access_token),
     :access_token => access_token,
