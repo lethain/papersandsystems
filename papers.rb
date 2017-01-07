@@ -22,6 +22,7 @@ MYSQL_DB = ENV['MYSQL_DB']
 MEMCACHE_HOSTS = ENV['MEMCACHE_HOSTS']
 DOMAIN = ENV['DOMAIN']
 GOOGLE_ANALYTICS_ID = ENV['GOOGLE_ANALYTICS_ID']
+# UA-89952144-1
 
 
 configure do
@@ -233,12 +234,12 @@ get '/papers/:id/' do
     if paper
       cv = common_vars(m, paper['name'])
       cv[:paper] = paper
-      cv[:og_description] = extract_desc(paper['description'])
       if cv[:user]
         cv[:has_read] = UserPapers.new(m).has_read(cv[:user]['id'], pid)
       else
         cv[:has_read] = nil
       end
+      cv[:og_description] = extract_desc(paper['description'])
       cv[:systems] = SystemPapers.new(m).related_systems(pid)
       cv[:systems_table] = erb(:table_systems, :locals => cv, :layout=> nil)
       cv[:rendered] = get_markdown.render(paper['description'])

@@ -21,7 +21,7 @@ def extract_desc(s)
     end
     acc += line + " "
   end
-  acc.strip
+  acc.strip.gsub(/\[(.*)\]\(.*\)/, '\1').gsub(/\*/, '')
 end
 
 def upload_token(uid)
