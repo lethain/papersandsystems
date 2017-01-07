@@ -13,6 +13,17 @@ def get_logger
   Logger.new(STDERR)
 end
 
+def extract_desc(s)
+  acc = ''
+  s.split("\n").each do |line|
+    if line.strip == '' or acc.length > 300
+      break
+    end
+    acc += line + " "
+  end
+  acc.strip
+end
+
 def upload_token(uid)
   ts = Time.now.to_i
   cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
@@ -72,7 +83,7 @@ class PASModel
       end
       sql += " WHERE #{filters.join(' and ')}"
     end
-    sql += " ORDER BY #{sort}"    
+    sql += " ORDER BY #{sort}"
     if opts[:limit]
       sql += " LIMIT #{opts[:limit]}"
     end
@@ -93,7 +104,7 @@ class PASModel
   end
 
   def count(opts=nil)
-    opts = opts ? opts : {}    
+    opts = opts ? opts : {}
     key = 'COUNT(id)'
     sql = "SELECT #{key} FROM #{@table}"
     if opts[:where]
@@ -102,7 +113,7 @@ class PASModel
       end
       sql += " WHERE #{filters.join(' and ')}"
     end
-    
+
     res = self.run(sql).to_a
     if res.size and res[0].has_key?(key)
       res[0][key]

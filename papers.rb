@@ -77,7 +77,9 @@ def common_vars(m, title=nil)
     :user => Users.new(m).get_by_token(access_token),
     :access_token => access_token,
     :paper_count => paper_count,
-    :system_count => system_count
+    :system_count => system_count,
+    :og_title => title,
+    :og_description => nil
   }
 end
 
@@ -229,6 +231,7 @@ get '/papers/:id/' do
     if paper
       cv = common_vars(m, paper['name'])
       cv[:paper] = paper
+      cv[:og_description] = extract_desc(paper['description'])
       if cv[:user]
         cv[:has_read] = UserPapers.new(m).has_read(cv[:user]['id'], pid)
       else
