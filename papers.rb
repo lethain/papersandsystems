@@ -22,7 +22,6 @@ MYSQL_DB = ENV['MYSQL_DB']
 MEMCACHE_HOSTS = ENV['MEMCACHE_HOSTS']
 DOMAIN = ENV['DOMAIN']
 GOOGLE_ANALYTICS_ID = ENV['GOOGLE_ANALYTICS_ID']
-# UA-89952144-1
 
 
 configure do
@@ -122,7 +121,7 @@ get '/systems/:id/' do
   segment = params[:id]
   with_mysql do |m|
     s = Systems.new(m)
-    system = segment.length == 36 ? s.get('id', segment) : s.get('template', segment)
+    system = s.get_by_template_or_id(segment)
     if system
       sid = system['id']
       cv = common_vars(m, system['name'])
@@ -145,12 +144,13 @@ get '/systems/:id/' do
 end
 
 get '/systems/:id/input/' do
-  sid = params[:id]
+  segment = params[:id]
   with_mysql do |m|
     s = Systems.new(m)
-    system = s.get('id', sid)
+    system = s.get_by_template_or_id(segment)
     if system
-      fn = "#{sid}_input.txt"
+      sid = system['id']
+      fn = "#{system['template']}_input.txt"
       send_file "solutions/#{system['template']}.in", :filename => fn
     else
       status 404
@@ -160,8 +160,8 @@ get '/systems/:id/input/' do
 end
 
 post '/systems/:id/output/' do
+  segment = params[:id]
   token = params[:token]
-  sid = params[:id]
   if token
     begin
       uid, ts = decode_token(token.strip)
@@ -171,7 +171,8 @@ post '/systems/:id/output/' do
     end
     with_mysql do |m|
       s = Systems.new(m)
-      system = s.get('id', sid)
+      system = s.get_by_template_or_id(segment)
+      sid = system['id']
       solution = File.open("solutions/#{system['template']}.out")
       errors = 0
       lines = 0

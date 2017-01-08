@@ -12,9 +12,9 @@
   <div class="col-sm-12">
     <div class="card">
       <h6 class="card-header">Submit via CLI</h6>
-      <pre class="card-pre">curl <%= domain %>/systems/<%= system['id'] %>/input/ > <%= system['id'] %>_input.txt
-python your_script.py &lt; <%= system['id'] %>_input.txt &gt; <%= system['id'] %>_output.txt
-curl --data-binary "@<%= system['id'] %>_output.txt" <%= domain %>/systems/<%= system['id'] %>/output/?token=<%= upload_token %></pre>
+      <pre class="card-pre">curl <%= domain %>/systems/<%= system['template'] %>/input/ > <%= system['template'] %>_input.txt
+python your_script.py &lt; <%= system['template'] %>_input.txt &gt; <%= system['template'] %>_output.txt
+curl --data-binary "@<%= system['template'] %>_output.txt" <%= domain %>/systems/<%= system['template'] %>/output/?token=<%= upload_token %></pre>
     </div>
   </div>
 </div>
@@ -24,7 +24,7 @@ curl --data-binary "@<%= system['id'] %>_output.txt" <%= domain %>/systems/<%= s
       <h6 class="card-header">Submit via RunKit</h6>
       <div id="runkit-submit">
 var sap = require("systemsandpapers")
-var sid = "<%= system['id'] %>"
+var sid = "<%= system['template'] %>"
 var token = "<%= upload_token %>"
 
 function solve(input) {
