@@ -1,0 +1,270 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<h2 class="card-title"><%= system['name'] %></h2>
+	<h6 class="card-subtitle text-muted">
+	  Added on <%= system['ts'].strftime("%B %-d, %Y") %> and completed <%= system['completion_count'] %> time<% if system['completion_count'] != 1 %>s<% end %>.
+	  <% if user and has_completed %>
+	  You completed this system on <%= has_completed.strftime("%B %-d, %Y") %>.
+	  <% end %>
+	</h6>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  Taking many of the ideas of <a href="https://memcached.org/">Memcached</a>,
+	  <a href="https://redis.io/">Redis</a> is popular in-memory cache and datastructure store.
+	  Compared to Memcached, Redis provides a much richer set of operations including lists, sets,
+	  and sorted sets, although it does not provide Memcached's support for sharding keys across
+	  multiple machines (although <a href="https://redis.io/topics/cluster-spec">Redis Cluster</a>
+	  provides some of that functionality and is maturing).
+	</p>
+	<p class="card-text">
+	  In addition to its wide range of supported datastructures, one of the most compelling aspects
+	  of Redis' design is the <a href="https://redis.io/topics/protocol">simple protocol</a> between
+	  the client and server, and this system will focus on implementing a simple version of the Redis
+	  server. (If you don't find this protocol particularly elegant, wait until we explore the Memcached
+	  protocol in a later system, and you may change your mind.)
+	</p>
+	<p class="card-text">
+	  As a quick aside, if you're looking for more examples of how Redis protocol works, the easiest way
+	  to find them is to install Redis on your computer, run ngrep along the lines of
+	  <code>sudo ngrep -d l0 port 6379</code>, and then use a redis client to send some commands!
+	  That will give you a chance to see both the client and server protocol.
+	</p>
+	<p class="card-text">
+	  Given that there are a huge number of Redis commands, we're going to focus on implementing only
+	  a subset of the <a href="https://redis.io/commands#list">list commands</a>, specifically: LLEN,
+	  LPUSH, LPOP and LRANGE.
+	</p>
+	<p class="card-text">
+	  Let's take a look at the input and output for each of those commands,
+	  starting with LLEN which returns the length of a list, and whose
+	  syntax is  <code>LLEN key</code>.
+	</p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Input</h6>
+	<pre class="card-pre">*2\r\n
+$4\r\n
+LLEN\r\n
+$7\r\n
+systems\r\n</pre>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Output</h6>
+	<pre class="card-pre">
+
+
+
+
+:5\r\n</pre>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  LPUSH is used to prepend values to a list, and takes the format <code>LPUSH key value [value ...]</code>,
+	  meaning it must specify at least one value to prepend, but may specify many. Note that the return value is
+	  the new length of the list with new values added.
+	</p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Input</h6>
+	<pre class="card-pre">*3\r\n
+$5\r\n
+lpush\r\n
+$7\r\n
+systems\r\n
+$1\r\n
+a\r\n
+*4\r\n
+$5\r\n
+lpush\r\n
+$7\r\n
+systems\r\n
+$3\r\n
+bbb\r\n
+$2\r\n
+cc\r\n</pre>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Output</h6>
+	<pre class="card-pre">
+
+
+
+
+
+
+:1\r\n
+
+
+
+
+
+
+
+
+:3\r\n</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  LPOP is used to remove and return the first element in a list, in the form of <code>LPOP key</code>.
+	</p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Input</h6>
+	<pre class="card-pre">*2\r\n
+$4\r\n
+lpop\r\n
+$7\r\n
+systems\r\n</pre>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Output</h6>
+	<pre class="card-pre">$1\r\n
+c\r\n
+
+
+
+</pre>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  LRANGE retrieves all values in a list from the start to stop positions, inclusive.
+	  The format is <code>LRANGE key start stop</code>.
+	</p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Input</h6>
+	<pre class="card-pre">*4\r\n
+$6\r\n
+LRANGE\r\n
+$7\r\n
+systems\r\n
+$1\r\n
+0\r\n
+$1
+3\r\n</pre>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Output</h6>
+	<pre class="card-pre">*3\r\n
+$1\r\n
+c\r\n
+$1\r\n
+b\r\n
+$1
+a\r\n
+
+	</pre>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  Alright, now let's take a stab at combining all of those actions! Noting that
+	  we're using a slightly more compact representation here.
+	</p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Input</h6>
+	<pre class="card-pre">
+*2\r\n$4\r\nllen\r\n$6\r\npapers\r\n
+*4\r\n$6\r\nlrange\r\n$6\r\npapers\r\n$1\r\n0\r\n$3\r\n100\r\n
+*2\r\n$4\r\nlpop\r\n$6\r\npapers\r\n
+*3\r\n$5\r\nlpush\r\n$6\r\npapers\r\n$6\r\ndynamo\r\n
+*5\r\n$5\r\nlpush\r\n$6\r\npapers\r\n$4\r\nraft\r\n$5\r\npaxos\r\n$4\r\nswim\r\n
+*2\r\n$4\r\nlpop\r\n$6\r\npapers\r\n
+*2\r\n$4\r\nlpop\r\n$6\r\npapers\r\n
+*4\r\n$6\r\nlrange\r\n$6\r\npapers\r\n$1\r\n0\r\n$3\r\n100\r\n</pre>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Output</h6>
+	<pre class="card-pre">
+:0\r\n
+*0\r\n
+$-1\r\n
+:1\r\n
+:4\r\n
+$4\r\nswim\r\n
+$5\r\npaxos\r\n
+*2\r\n$4\r\nraft\r\n$6\r\ndynamo\r\n</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  Once your implementations output works for that input, you're
+	  reading to take on the challenge below!
+	</p>
+      </div>
+    </div>
+  </div>  
+
+  <%= submit_fragment %>
+
+  <% if papers.size > 0 %>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-no-margin">
+	<h6 class="card-header">Related papers</h6>
+	<%= papers_table %>
+      </div>
+    </div>
+  </div>
+  <% end %>
+</div>
