@@ -1,0 +1,123 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<h2 class="card-title"><%= system['name'] %></h2>
+	<h6 class="card-subtitle text-muted">
+	  Added on <%= system['ts'].strftime("%B %-d, %Y") %> and completed <%= system['completion_count'] %> time<% if system['completion_count'] != 1 %>s<% end %>.
+	  <% if user and has_completed %>
+	  You completed this system on <%= has_completed.strftime("%B %-d, %Y") %>.
+	  <% end %>
+	</h6>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  <a href="https://github.com/etsy/statsd">StatsD</a> is an extremely popular open source tool
+	  for collecting metrics. The typical configuration is to run the Statsd daemon on
+	  each of your servers <a href="/papers/0087f52f-0046-4327-9a45-f2d019096a6d/">following the Sidecar pattern</a>,
+	  and periodically forward the accumulated metrics to <a href="http://graphite.readthedocs.io/en/latest/">Graphite's</a>
+	  Carbon daemon.
+	</p>
+	<img src="/static/img/systems/statsd_graphite.png" class="system">
+	<p class="card-text">
+	  This pattern makes it possible to scale network and storage costs based on the cardinality of
+	  metrics stored as opposed to the number of metric observations taken. Said differently, this
+	  model means you can record each time a server performs an HTTP request, and you'll use the same
+	  amount of disk space on Graphite and the same amount of network bandwidth to transmit those metrics,
+	  whether you're doing 100 requests per minute or 10,000 requests per second.
+	</p>
+	<p class="card-text">
+	  Another impressive aspect of StatsD, and likely why it has remained popular and been
+	  reimplemented in numerous languages, is
+	  <a href="http://graphite.readthedocs.io/en/latest/">the simple protocol</a> that clients use
+	  to communicate with it.
+	</p>
+      </div>
+      <pre class="card-pre">http.request:1|c
+http.request:1|c
+http.duration:103|ms
+http.duration:12|ms</pre>
+      <div class="card card-block">
+	<p class="card-text">
+	  Those four commands would increment the <code>http.request</code> counter twice,
+	  and add two timings for the <code>http.duration</code> timer. These counters and times
+	  accumulate until a flush is triggered, typically every ten seconds or so.
+	</p>
+	<p class="card-text">
+	  This system challenge is to build an implementation of StatsD, which takes commands from standard in,
+	  supporting both the counter and timer syntaxes and also an added <code>flush</code> command.
+	  The <code>flush</code> commands prints the accumulated data to standard out, and then resets
+	  accumulated state to empty.
+	</p>
+	<p class="card-text">
+	  A few more detailed rules about flushing, to get matching output.
+	  Flushed keys should be ordered alphabetically, and that there will be no timers
+	  and counters that share the same. Flushed timers should represent the average of
+	  all supplied timers for a given metric, and should be integers (effectively the floor,
+	  as you'll throw away any decimal level accuracy before flushing the output).
+	</p>
+
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Input</h6>
+	<pre class="card-pre">req:1|c
+req:3|c
+resp:89|c
+flush
+req:12|c
+flush
+req:201|c
+dur:100|ms
+dur:300|ms
+flush
+</pre>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Output</h6>
+	<pre class="card-pre"># no output
+# no output
+# no output
+req: 4, resp: 89
+# no output
+req: 12
+# no output
+# no output
+# no output
+dur: 200, req: 201</pre>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  Once you have that input/output working properly, you're ready to take
+	  on the complete challenge below!
+	</p>
+      </div>
+    </div>
+  </div>
+
+  <%= submit_fragment %>
+
+  <% if papers.size > 0 %>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-no-margin">
+	<h6 class="card-header">Related papers</h6>
+	<%= papers_table %>
+      </div>
+    </div>
+  </div>
+  <% end %>
+</div>

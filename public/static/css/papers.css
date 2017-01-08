@@ -8,6 +8,13 @@ body {
     margin-bottom: 60px;
 }
 
+img.system {
+    padding-top: 2em;
+    padding-bottom: 2em;
+    margin: auto;
+    display: block;
+}
+
 .footer {
     position: absolute;
     bottom: 0;
