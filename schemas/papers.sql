@@ -11,8 +11,10 @@ CREATE TABLE IF NOT EXISTS papers(
        rating TINYINT DEFAULT 0,
        year SMALLINT DEFAULT 0,
        topic VARCHAR(255),
+       slug VARCHAR(255),
        PRIMARY KEY (id)
 ) engine=InnoDB;
 CREATE INDEX pindex on papers (pos);
 CREATE INDEX trindex on papers (topic, rating, pos);
 CREATE INDEX rindex on papers (rating, pos);
+CREATE INDEX sindex on papers (slug);

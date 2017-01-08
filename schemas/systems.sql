@@ -10,3 +10,5 @@ CREATE TABLE IF NOT EXISTS systems(
        PRIMARY KEY (id)
 ) engine=InnoDB;
 CREATE INDEX pindex on systems (pos);
+CREATE INDEX tindex on systems (template);
+CREATE INDEX cindex on systems (completion_count);

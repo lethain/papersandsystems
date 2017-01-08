@@ -12,13 +12,13 @@ class SystemPapers < PASModel
 
   def related_systems(paper_id)
     paper_id = self.escape(paper_id)
-    sql = "SELECT systems.id, systems.pos, systems.name, systems.completion_count FROM system_papers JOIN systems ON systems.id=system_papers.system_id WHERE paper_id='#{paper_id}' ORDER BY systems.pos"
+    sql = "SELECT systems.id, systems.template, systems.pos, systems.name, systems.completion_count FROM system_papers JOIN systems ON systems.id=system_papers.system_id WHERE paper_id='#{paper_id}' ORDER BY systems.pos"
     self.run(sql)
   end
 
   def related_papers(system_id)
     system_id = self.escape(system_id)
-    sql = "SELECT papers.id, papers.pos, papers.name, papers.read_count, papers.topic, papers.rating, papers.year FROM system_papers JOIN papers ON papers.id=system_papers.paper_id WHERE system_id='#{system_id}' ORDER BY papers.pos"
+    sql = "SELECT papers.id, papers.pos, papers.slug, papers.name, papers.read_count, papers.topic, papers.rating, papers.year FROM system_papers JOIN papers ON papers.id=system_papers.paper_id WHERE system_id='#{system_id}' ORDER BY papers.pos"
     self.run(sql)
   end
 
