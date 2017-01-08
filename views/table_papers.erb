@@ -13,7 +13,7 @@
     <% papers.each do |paper| %>
     <tr>
       <th scope="row"><%= paper['pos'] %></th>
-      <td><a href="/papers/<%= paper['id'] %>/"><%= paper['name'] %></a></td>
+      <td><a href="/papers/<% if paper['slug'] %><%= paper['slug'] %><% else %><%= paper['id'] %><% end %>/"><%= paper['name'] %></a></td>
       <td class="hidden-sm-down"><%= paper['year'] %></td>
       <td class="hidden-sm-down"><%= paper['topic'] %></td>
       <td><%= '★' * paper['rating'].to_i %></td>

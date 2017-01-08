@@ -227,11 +227,13 @@ get '/papers/' do
 end
 
 get '/papers/:id/' do
-  pid = params[:id]
+  segment = params[:id]
+
   with_mysql do |m|
     p = Papers.new(m)
-    paper = p.get('id', pid)
+    paper = segment.length == 36 ? p.get('id', segment) : p.get('slug', segment)
     if paper
+      pid = paper['id']
       cv = common_vars(m, paper['name'])
       cv[:paper] = paper
       if cv[:user]
@@ -272,6 +274,7 @@ post '/papers/:id/edit/' do
       paper = p.get('id', pid)
       updates = {
         :name => params['name'],
+        :slug => params['slug'],
         :pos => params['pos'],
         :link => params['link'],
         :description => params['description'],
@@ -359,7 +362,7 @@ post '/admin/add-paper/' do
   with_mysql do |m|
     cv = common_vars(m)
     if cv[:user] and cv[:user]['is_admin']
-      Papers.new(m).create(params['name'], params['link'], params['description'], params['topic'], params['year'])
+      Papers.new(m).create(params['name'], params['link'], params['description'], params['topic'], params['year'], params['slug'])
       redirect '/papers/'
     else
       error_page(403, 'Must be logged in as an admin.')
