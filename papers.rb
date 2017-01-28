@@ -254,11 +254,14 @@ get '/papers/:id/' do
 end
 
 get '/papers/:id/edit/' do
+  segment = params[:id]
   with_mysql do |m|
-    pid = params[:id]
+    p = Papers.new(m)
+    paper = segment.length == 36 ? p.get('id', segment) : p.get('slug', segment)
+    pid = paper['id']
     cv = common_vars(m, 'Edit Paper')
     if cv[:user] and cv[:user]['is_admin']
-      cv[:paper] = Papers.new(m).get('id', pid)
+      cv[:paper] = paper
       erb :edit_paper, :locals => cv
     else
       error_page(403, 'Must be logged in as admin to edit paper.')
@@ -292,8 +295,8 @@ end
 
 
 get '/papers/:id/read/' do
+  segment = params[:id]
   with_mysql do |m|
-    pid = params[:id]
     cv = common_vars(m)
     if not params[:rating]
       return error_page(400, "Must supply 'rating' parameter.")
@@ -304,15 +307,25 @@ get '/papers/:id/read/' do
     end
     if cv[:user]
       uid = cv[:user]['id']
-      ups = UserPapers.new(m)
-      ups.create(uid, pid, rating)
-      count = ups.user_count(uid)
-      avg = ups.rating(pid)
-      Users.new(m).update(uid, :read_count => count)
       p = Papers.new(m)
-      p.incr(pid, 'read_count')
-      p.update(pid, :rating => avg)
-      redirect "/papers/#{pid}/"
+      paper = segment.length == 36 ? p.get('id', segment) : p.get('slug', segment)
+      if paper
+        pid = paper['id']
+        ups = UserPapers.new(m)
+        ups.create(uid, pid, rating)
+        count = ups.user_count(uid)
+        avg = ups.rating(pid)
+        Users.new(m).update(uid, :read_count => count)
+        p.incr(pid, 'read_count')
+        p.update(pid, :rating => avg)
+        if paper['slug']
+          redirect "/papers/#{paper['slug']}/"
+        else
+          redirect "/papers/#{pid}/"
+        end
+      else
+        error_page(404, 'That paper doesn\'t exist.')
+      end
     else
       error_page(403, 'Must be logged in to mark paper as read.')
     end
