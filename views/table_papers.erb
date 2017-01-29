@@ -6,7 +6,7 @@
       <th class="hidden-sm-down">Year</th>
       <th class="hidden-sm-down">Topic</th>
       <th>Rating</th>
-      <th class="hidden-sm-down">Readers</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -17,7 +17,7 @@
       <td class="hidden-sm-down"><%= paper['year'] %></td>
       <td class="hidden-sm-down"><%= paper['topic'] %></td>
       <td><%= '★' * paper['rating'].to_i %></td>
-      <td class="hidden-sm-down"><%= paper['read_count'] %> reader<% if paper['read_count'] != 1 %>s<% end %><% if paper['user_has_read'] %>, including you<% end %>.</td>
+      <td><% if paper['user_has_read'] %> ✓<% end %></td>
     </tr>
     <% end %>
   </tbody>
