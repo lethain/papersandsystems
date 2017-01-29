@@ -30,8 +30,8 @@ function sortTable(head, table) {
     });
     var diffs = 0;
     for (var i=0; i < rows.length; i++) {
-	var rt = $(rows[i]).text();
-	var ot = $(orig[i]).text();
+	var rt = $(rows[i]).children().eq(idx).text();
+	var ot = $(orig[i]).children().eq(idx).text();
 	if (rt != ot) diffs++;
     }
     if (diffs === 0) rows.reverse();
