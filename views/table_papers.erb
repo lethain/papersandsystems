@@ -5,7 +5,7 @@
       <th class="th-sort hidden-sm-down">Year</th>
       <th class="th-sort hidden-sm-down">Topic</th>
       <th class="th-sort">Rating</th>
-      <th class="th-sort">✓</th>
+      <% if user %><th class="th-sort">✓</th><% end %>
     </tr>
   </thead>
   <tbody>
@@ -15,7 +15,7 @@
       <td class="hidden-sm-down"><%= paper['year'] %></td>
       <td class="hidden-sm-down"><%= paper['topic'] %></td>
       <td><%= '★' * paper['rating'].to_i %></td>
-      <td><% if paper['user_has_read'] %>✓<% end %></td>
+      <% if user %><td><% if paper['user_has_read'] %>✓<% end %></td><% end %>
     </tr>
     <% end %>
   </tbody>
