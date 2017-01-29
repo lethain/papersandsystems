@@ -18,16 +18,23 @@ function naturalSorter(as, bs){
     return b[i]? -1:0;
 }
 
-
 function sortTable(head, table) {
     var idx = $(head).parent().children().index($(head));
     var rows = $('tbody tr', table).get();
+    var orig = rows.slice(0, rows.length);
     rows.sort(function(a, b) {
 	var av = $(a).children().eq(idx).text()
 	var bv = $(b).children().eq(idx).text();
 	var res = naturalSorter(av, bv);
 	return res;
     });
+    var diffs = 0;
+    for (var i=0; i < rows.length; i++) {
+	var rt = $(rows[i]).text();
+	var ot = $(orig[i]).text();
+	if (rt != ot) diffs++;
+    }
+    if (diffs === 0) rows.reverse();
     $.each(rows, function(index, row) {
 	$(table).children('tbody').append(row);
     });
