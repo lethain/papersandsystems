@@ -1,23 +1,21 @@
 <table class="table table-striped table-bordered">
   <thead>
     <tr>
-      <th>#</th>
-      <th>Name</th>
-      <th class="hidden-sm-down">Year</th>
-      <th class="hidden-sm-down">Topic</th>
-      <th>Rating</th>
-      <th></th>
+      <th class="th-sort">Name</th>
+      <th class="th-sort hidden-sm-down">Year</th>
+      <th class="th-sort hidden-sm-down">Topic</th>
+      <th class="th-sort">Rating</th>
+      <th class="th-sort">✓</th>
     </tr>
   </thead>
   <tbody>
     <% papers.each do |paper| %>
     <tr>
-      <th scope="row"><%= paper['pos'] %></th>
       <td><a href="/papers/<% if paper['slug'] %><%= paper['slug'] %><% else %><%= paper['id'] %><% end %>/"><%= paper['name'] %></a></td>
       <td class="hidden-sm-down"><%= paper['year'] %></td>
       <td class="hidden-sm-down"><%= paper['topic'] %></td>
       <td><%= '★' * paper['rating'].to_i %></td>
-      <td><% if paper['user_has_read'] %> ✓<% end %></td>
+      <td><% if paper['user_has_read'] %>✓<% end %></td>
     </tr>
     <% end %>
   </tbody>
