@@ -30,3 +30,7 @@ memcached:
 
 mongo:
 	mongod --config /usr/local/etc/mongod.conf
+
+
+fmt:
+	prettier --write 'public/static/*.js'
