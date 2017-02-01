@@ -217,7 +217,7 @@ end
 get '/papers/' do
   with_mysql do |m|
     cv = common_vars(m, "Papers")
-    papers = Papers.new(m).list(:sort => '-rating, -pos', :cols => ['pos', 'id', 'slug', 'name', 'read_count', 'topic', 'rating', 'year'])
+    papers = Papers.new(m).list(:sort => 'pos', :cols => ['pos', 'id', 'slug', 'name', 'read_count', 'topic', 'rating', 'year'])
     if cv[:user]
       papers = UserPapers.new(m).mark_read(cv[:user]['id'], papers)
     end
@@ -271,11 +271,12 @@ end
 
 post '/papers/:id/edit/' do
   with_mysql do |m|
-    pid = params[:id]
+    segment = params[:id]
     cv = common_vars(m)
     if cv[:user] and cv[:user]['is_admin']
       p = Papers.new(m)
-      paper = p.get('id', pid)
+      paper = segment.length == 36 ? p.get('id', segment) : p.get('slug', segment)
+      pid = paper['id']
       updates = {
         :name => params['name'],
         :slug => params['slug'],
