@@ -22,6 +22,15 @@ prod:
 	    RACK_ENV=production \
 	bundler exec unicorn -c unicorn.rb
 
+test:
+	clear && \
+	env RACK_ENV=test \
+	    MYSQL_HOST=localhost \
+	    MYSQL_USER=root \
+	    MYSQL_PASS= \
+	    MYSQL_DB=test_papers \
+	bundler exec ruby test.rb
+
 mysql:
 	mysql.server start
 

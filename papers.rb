@@ -12,7 +12,6 @@ require 'dalli'
 require 'rack/session/dalli'
 require 'redcarpet'
 
-
 CLIENT_ID = ENV['GH_BASIC_CLIENT_ID']
 CLIENT_SECRET = ENV['GH_BASIC_SECRET_ID']
 MYSQL_HOST = ENV['MYSQL_HOST']
@@ -23,23 +22,55 @@ MEMCACHE_HOSTS = ENV['MEMCACHE_HOSTS']
 DOMAIN = ENV['DOMAIN']
 GOOGLE_ANALYTICS_ID = ENV['GOOGLE_ANALYTICS_ID']
 
-
 configure do
-  set :erb, :format => :html5
+  set :erb, format: :html5
   use Rack::Session::Dalli, cache: Dalli::Client.new(MEMCACHE_HOSTS)
 end
 
-def get_markdown
+def markdown
   Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
 end
 
-def get_mysql
-  Mysql2::Client.new(:host => MYSQL_HOST, :username => MYSQL_USER, :password => MYSQL_PASS,
-                     :database => MYSQL_DB, :automatic_close => true)
+def mysql
+  Mysql2::Client.new(host: MYSQL_HOST,
+                     username: MYSQL_USER,
+                     password: MYSQL_PASS,
+                     database: MYSQL_DB,
+                     automatic_close: true)
 end
 
+def create_tables
+  m = mysql
+  tables = []
+  Dir.glob('schemas/*').each do |fn|
+    f = File.open(fn, 'rb')
+    raw = f.read
+    raw = raw.gsub(/CREATE DATABASE IF NOT EXISTS papers;/, "CREATE DATABASE IF NOT EXISTS #{MYSQL_DB};")
+    raw = raw.gsub(/USE papers;/, "USE #{MYSQL_DB};")
+
+    tables << raw.match(/CREATE TABLE IF NOT EXISTS (\w+)\(/)[1]
+    raw.split(';').each do |cmd|
+      begin
+        m.query(cmd+';')
+      rescue Exception => e
+        puts e
+      end
+    end
+  end
+  tables
+end
+
+def drop_tables(tables)
+  m = mysql
+  tables.each do |table|
+    m.query("DELETE FROM #{table};")
+  end
+end
+
+
+
 def with_mysql
-  m = get_mysql
+  m = mysql
   v = nil
   begin
     v = yield m
@@ -55,33 +86,33 @@ def error_page(status_code, msg)
     cv = common_vars(m, status_code.to_s)
     cv[:status_code] = status_code
     cv[:error_msg] = msg
-    erb :not_found, :locals => cv
+    erb :not_found, locals: cv
   end
 end
 
 not_found do
-  error_page(404, "Not Found")
+  error_page(404, 'Not Found')
 end
 
 def get_counts(m)
-  pc = Papers.new(m).count()
-  sc = Systems.new(m).count()
+  pc = Papers.new(m).count
+  sc = Systems.new(m).count
   return sc, pc
 end
 
-def common_vars(m, title=nil)
+def common_vars(m, title = nil)
   access_token = authenticated?
   system_count, paper_count = get_counts(m)
   {
-    :domain => DOMAIN,
-    :ga_id => GOOGLE_ANALYTICS_ID,
-    :title => title,
-    :user => Users.new(m).get_by_token(access_token),
-    :access_token => access_token,
-    :paper_count => paper_count,
-    :system_count => system_count,
-    :og_title => title,
-    :og_description => nil
+    domain: DOMAIN,
+    ga_id: GOOGLE_ANALYTICS_ID,
+    title: title,
+    user: Users.new(m).get_by_token(access_token),
+    access_token: access_token,
+    paper_count: paper_count,
+    system_count: system_count,
+    og_title: title,
+    og_description: nil
   }
 end
 
@@ -91,8 +122,8 @@ end
 
 get '/about/' do
   with_mysql do |m|
-    cv = common_vars(m, "About")
-    erb :about, :locals => cv
+    cv = common_vars(m, 'About')
+    erb :about, locals: cv
   end
 end
 
@@ -107,7 +138,7 @@ end
 
 get '/' do
   with_mysql do |m|
-    cv = common_vars(m, "Systems")
+    cv = common_vars(m, 'Systems')
     cv[:systems] = Systems.new(m).list(:sort => 'pos', :cols => ['pos', 'id', 'name', 'template', 'completion_count'])
     if cv[:user]
       cv[:systems] = UserSystems.new(m).mark_completed(cv[:user]['id'], cv[:systems])
@@ -245,7 +276,7 @@ get '/papers/:id/' do
       cv[:og_description] = extract_desc(paper['description'])
       cv[:systems] = SystemPapers.new(m).related_systems(pid)
       cv[:systems_table] = erb(:table_systems, :locals => cv, :layout=> nil)
-      cv[:rendered] = get_markdown.render(paper['description'])
+      cv[:rendered] = markdown.render(paper['description'])
       erb :paper, :locals => cv
     else
       error_page(404, "No such paper found.")
@@ -400,7 +431,7 @@ post '/admin/add-system/' do
   with_mysql do |m|
     cv = common_vars(m)
     if cv[:user] and cv[:user]['is_admin']
-      Systems.new(get_mysql).create(params['name'], params['template'])
+      Systems.new(mysql).create(params['name'], params['template'])
       redirect '/'
     else
       error_page(403, 'Must be logged in as an admin.')
