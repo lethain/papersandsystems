@@ -29,15 +29,22 @@ class HelloWorldTest < Test::Unit::TestCase
   def test_papers_not_empty
     drop_tables(@tables)
     p = Papers.new(mysql)
+    args = ['Name', 'Link', 'Desc', 'Topic', '2017', 'Slug']
     (1..2).each do |n|
-      p.create('Name', 'Link', 'Desc', 'Topic', '2017', 'Slug')
+      p.create(*args)
       get '/papers/'
       assert last_response.ok?
       doc = Nokogiri::HTML(last_response.body)
       rows = doc.css("tbody tr")
-      assert_equal n, rows.size      
+      assert_equal n, rows.size
+      rows.each do |row|
+        cols = row.css("td").map { |x| x.text }
+        assert_equal ['Name', '2017', 'Topic', ''], cols
+      end
     end
-  end  
+  end
+
+
 
 
 end
