@@ -50,10 +50,11 @@ def create_tables
 
     tables << raw.match(/CREATE TABLE IF NOT EXISTS (\w+)\(/)[1]
     raw.split(';').each do |cmd|
+      next if cmd.strip.size == 0
       begin
         m.query(cmd+';')
       rescue Exception => e
-        puts e
+        puts e if !e.to_s.start_with? 'Duplicate key name'
       end
     end
   end
