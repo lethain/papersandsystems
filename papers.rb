@@ -21,6 +21,7 @@ MYSQL_DB = ENV['MYSQL_DB']
 MEMCACHE_HOSTS = ENV['MEMCACHE_HOSTS']
 DOMAIN = ENV['DOMAIN']
 GOOGLE_ANALYTICS_ID = ENV['GOOGLE_ANALYTICS_ID']
+RACK_ENV = ENV['RACK_ENV']
 
 configure do
   set :erb, format: :html5
@@ -148,6 +149,15 @@ get '/' do
     erb :systems, :locals => cv
   end
 end
+
+post '/test-login/' do
+  if RACK_ENV == 'test'
+    session[:access_token] = 'test_token'
+  else
+    error_page(404, "Page not found.")
+  end
+end
+
 
 get '/systems/:id/' do
   segment = params[:id]
