@@ -18,9 +18,18 @@ class HelloWorldTest < Test::Unit::TestCase
     Sinatra::Application
   end
 
-  def test_login
+  def login_user
     m = mysql
+    at = 'test_token'
+    emails = [{'verified' => true, 'primary' => true, 'email' => 'test@example.org'}]
+    user = {'id' => 1, 'login' => 'test_user', 'avatar_url' => 'fake-url'}
+    info, success = Users.new(m).create(at, user, emails)
+    assert_equal true, success
+    post '/test-login/'
+    assert last_response.ok?
+  end
 
+  def test_login
     # login button should exist when logged out
     get '/'
     assert last_response.ok?
@@ -28,16 +37,8 @@ class HelloWorldTest < Test::Unit::TestCase
     login = doc.css("#login")
     assert_equal 1, login.size
 
-    # login
-    at = 'test_token'
-    emails = [{'verified' => true, 'primary' => true, 'email' => 'test@example.org'}]
-    user = {'id' => 1, 'login' => 'test_user', 'avatar_url' => 'fake-url'}
-    info, success = Users.new(m).create(at, user, emails)
-    assert_equal true, success
-    post '/test-login/'
-    assert last_response.ok?    
-    
     # login button is gone
+    login_user
     get '/'
     assert last_response.ok?
     doc = Nokogiri::HTML(last_response.body)
