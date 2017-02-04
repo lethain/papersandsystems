@@ -155,4 +155,13 @@ class HelloWorldTest < Test::Unit::TestCase
   end
 
 
+  def test_about
+    get '/about/'
+    assert last_response.ok?
+    login_user
+    get '/about/'
+    assert last_response.ok?
+  end
+
+
 end
