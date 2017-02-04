@@ -51,11 +51,11 @@ def create_tables
 
     tables << raw.match(/CREATE TABLE IF NOT EXISTS (\w+)\(/)[1]
     raw.split(';').each do |cmd|
-      next if cmd.strip.size == 0
+      next if cmd.strip.empty?
       begin
-        m.query(cmd+';')
+        m.query(cmd + ';')
       rescue Exception => e
-        puts e if !e.to_s.start_with? 'Duplicate key name'
+        puts e unless e.to_s.start_with? 'Duplicate key name'
       end
     end
   end
@@ -68,8 +68,6 @@ def drop_tables(tables)
     m.query("DELETE FROM #{table};")
   end
 end
-
-
 
 def with_mysql
   m = mysql
@@ -99,7 +97,7 @@ end
 def get_counts(m)
   pc = Papers.new(m).count
   sc = Systems.new(m).count
-  return sc, pc
+  [sc, pc]
 end
 
 def common_vars(m, title = nil)
@@ -141,12 +139,12 @@ end
 get '/' do
   with_mysql do |m|
     cv = common_vars(m, 'Systems')
-    cv[:systems] = Systems.new(m).list(:sort => 'pos', :cols => ['pos', 'id', 'name', 'template', 'completion_count'])
+    cv[:systems] = Systems.new(m).list(sort: 'pos', cols: %w(pos id name template completion_count))
     if cv[:user]
       cv[:systems] = UserSystems.new(m).mark_completed(cv[:user]['id'], cv[:systems])
     end
-    cv[:systems_table] = erb(:table_systems, :locals => cv, :layout=> nil)
-    erb :systems, :locals => cv
+    cv[:systems_table] = erb(:table_systems, locals: cv, layout: nil)
+    erb :systems, locals: cv
   end
 end
 
@@ -154,10 +152,9 @@ post '/test-login/' do
   if RACK_ENV == 'test'
     session[:access_token] = 'test_token'
   else
-    error_page(404, "Page not found.")
+    error_page(404, 'Page not found.')
   end
 end
-
 
 get '/systems/:id/' do
   segment = params[:id]
@@ -176,11 +173,11 @@ get '/systems/:id/' do
         cv[:papers] = UserPapers.new(m).mark_read(uid, cv[:papers])
         cv[:has_completed] = UserSystems.new(m).has_completed(uid, sid)
       end
-      cv[:papers_table] = erb(:table_papers, :locals => cv, :layout=> nil)
-      cv[:submit_fragment] = erb(:submit_system, :locals => cv, :layout => nil)
-      erb "systems/#{system['template']}".to_sym, :locals => cv
+      cv[:papers_table] = erb(:table_papers, locals: cv, layout: nil)
+      cv[:submit_fragment] = erb(:submit_system, locals: cv, layout: nil)
+      erb "systems/#{system['template']}".to_sym, locals: cv
     else
-      error_page(404, "No such system found.")
+      error_page(404, 'No such system found.')
     end
   end
 end
@@ -193,10 +190,10 @@ get '/systems/:id/input/' do
     if system
       sid = system['id']
       fn = "#{system['template']}_input.txt"
-      send_file "solutions/#{system['template']}.in", :filename => fn
+      send_file "solutions/#{system['template']}.in", filename: fn
     else
       status 404
-      body "No such system found."
+      body 'No such system found.'
     end
   end
 end
@@ -218,7 +215,7 @@ post '/systems/:id/output/' do
       solution = File.open("solutions/#{system['template']}.out")
       errors = 0
       lines = 0
-      resp = ""
+      resp = ''
       for line in request.body
         sol_line = solution.gets
         lines += 1
@@ -229,7 +226,7 @@ post '/systems/:id/output/' do
           errors += 1
         end
       end
-      if errors > 0 or lines == 0
+      if errors > 0 || (lines == 0)
         resp += "\nSorry, that doesn't look quite right. We found #{errors} errors.\n"
         status 400
         body resp
@@ -242,7 +239,7 @@ post '/systems/:id/output/' do
         else
           uss.create(uid, sid)
           count = uss.user_count(uid)
-          Users.new(m).update(uid, :completion_count => count)
+          Users.new(m).update(uid, completion_count: count)
           Systems.new(m).incr(sid, 'completion_count')
           resp += "This is your first time solving this problem, congrats.\n"
         end
@@ -258,14 +255,12 @@ end
 
 get '/papers/' do
   with_mysql do |m|
-    cv = common_vars(m, "Papers")
-    papers = Papers.new(m).list(:sort => '-rating', :cols => ['pos', 'id', 'slug', 'name', 'read_count', 'topic', 'rating', 'year'])
-    if cv[:user]
-      papers = UserPapers.new(m).mark_read(cv[:user]['id'], papers)
-    end
+    cv = common_vars(m, 'Papers')
+    papers = Papers.new(m).list(sort: '-rating', cols: %w(pos id slug name read_count topic rating year))
+    papers = UserPapers.new(m).mark_read(cv[:user]['id'], papers) if cv[:user]
     cv[:papers] = papers
-    cv[:papers_table] = erb(:table_papers, :locals => cv, :layout=> nil)
-    erb :papers, :locals => cv
+    cv[:papers_table] = erb(:table_papers, locals: cv, layout: nil)
+    erb :papers, locals: cv
   end
 end
 
@@ -286,11 +281,11 @@ get '/papers/:id/' do
       end
       cv[:og_description] = extract_desc(paper['description'])
       cv[:systems] = SystemPapers.new(m).related_systems(pid)
-      cv[:systems_table] = erb(:table_systems, :locals => cv, :layout=> nil)
+      cv[:systems_table] = erb(:table_systems, locals: cv, layout: nil)
       cv[:rendered] = get_markdown.render(paper['description'])
-      erb :paper, :locals => cv
+      erb :paper, locals: cv
     else
-      error_page(404, "No such paper found.")
+      error_page(404, 'No such paper found.')
     end
   end
 end
@@ -302,9 +297,9 @@ get '/papers/:id/edit/' do
     paper = segment.length == 36 ? p.get('id', segment) : p.get('slug', segment)
     pid = paper['id']
     cv = common_vars(m, 'Edit Paper')
-    if cv[:user] and cv[:user]['is_admin']
+    if cv[:user] && cv[:user]['is_admin']
       cv[:paper] = paper
-      erb :edit_paper, :locals => cv
+      erb :edit_paper, locals: cv
     else
       error_page(403, 'Must be logged in as admin to edit paper.')
     end
@@ -315,18 +310,18 @@ post '/papers/:id/edit/' do
   with_mysql do |m|
     segment = params[:id]
     cv = common_vars(m)
-    if cv[:user] and cv[:user]['is_admin']
+    if cv[:user] && cv[:user]['is_admin']
       p = Papers.new(m)
       paper = segment.length == 36 ? p.get('id', segment) : p.get('slug', segment)
       pid = paper['id']
       updates = {
-        :name => params['name'],
-        :slug => params['slug'],
-        :pos => params['pos'],
-        :link => params['link'],
-        :description => params['description'],
-        :topic => params['topic'],
-        :year => params['year']
+        name: params['name'],
+        slug: params['slug'],
+        pos: params['pos'],
+        link: params['link'],
+        description: params['description'],
+        topic: params['topic'],
+        year: params['year']
       }
       p.update(pid, updates)
       redirect "/papers/#{pid}/"
@@ -336,17 +331,16 @@ post '/papers/:id/edit/' do
   end
 end
 
-
 get '/papers/:id/read/' do
   segment = params[:id]
   with_mysql do |m|
     cv = common_vars(m)
-    if not params[:rating]
+    unless params[:rating]
       return error_page(400, "Must supply 'rating' parameter.")
     end
     rating = params[:rating].to_i
-    if rating < 1 or rating > 5
-      return error_page(400, "Rating must be between 1 and 5, inclusive.")
+    if rating < 1 || rating > 5
+      return error_page(400, 'Rating must be between 1 and 5, inclusive.')
     end
     if cv[:user]
       uid = cv[:user]['id']
@@ -358,9 +352,9 @@ get '/papers/:id/read/' do
         ups.create(uid, pid, rating)
         count = ups.user_count(uid)
         avg = ups.rating(pid)
-        Users.new(m).update(uid, :read_count => count)
+        Users.new(m).update(uid, read_count: count)
         p.incr(pid, 'read_count')
-        p.update(pid, :rating => avg)
+        p.update(pid, rating: avg)
         if paper['slug']
           redirect "/papers/#{paper['slug']}/"
         else
@@ -377,14 +371,14 @@ end
 
 get '/admin/recent/' do
   with_mysql do |m|
-    cv = common_vars(m, "Users")
-    if cv[:user] and cv[:user]['is_admin']
-      cv[:users] = Users.new(m).list({:sort => 'ts desc', :limit => 10})
+    cv = common_vars(m, 'Users')
+    if cv[:user] && cv[:user]['is_admin']
+      cv[:users] = Users.new(m).list(sort: 'ts desc', limit: 10)
       cv[:read] = []
       cv[:completed] = []
-      cv[:papers] = Papers.new(m).list({:sort => 'ts desc', :limit => 10})
-      cv[:systems] = Systems.new(m).list({:sort => 'ts desc', :limit => 10})
-      erb :recent, :locals => cv
+      cv[:papers] = Papers.new(m).list(sort: 'ts desc', limit: 10)
+      cv[:systems] = Systems.new(m).list(sort: 'ts desc', limit: 10)
+      erb :recent, locals: cv
     else
       error_page(403, 'Must be logged in as an admin.')
     end
@@ -393,10 +387,10 @@ end
 
 get '/admin/users/' do
   with_mysql do |m|
-    cv = common_vars(m, "Users")
-    if cv[:user] and cv[:user]['is_admin']
+    cv = common_vars(m, 'Users')
+    if cv[:user] && cv[:user]['is_admin']
       cv[:users] = Users.new(m).list
-      erb :users, :locals => cv
+      erb :users, locals: cv
     else
       error_page(403, 'Must be logged in as an admin.')
     end
@@ -406,9 +400,9 @@ end
 # should only allow this if you're an admin
 get '/admin/add-paper/' do
   with_mysql do |m|
-    cv = common_vars(m, "Add Paper")
-    if cv[:user] and cv[:user]['is_admin']
-      erb :add, :locals => cv
+    cv = common_vars(m, 'Add Paper')
+    if cv[:user] && cv[:user]['is_admin']
+      erb :add, locals: cv
     else
       error_page(403, 'Must be logged in as an admin.')
     end
@@ -418,7 +412,7 @@ end
 post '/admin/add-paper/' do
   with_mysql do |m|
     cv = common_vars(m)
-    if cv[:user] and cv[:user]['is_admin']
+    if cv[:user] && cv[:user]['is_admin']
       Papers.new(m).create(params['name'], params['link'], params['description'], params['topic'], params['year'], params['slug'])
       redirect '/papers/'
     else
@@ -429,9 +423,9 @@ end
 
 get '/admin/add-system/' do
   with_mysql do |m|
-    cv = common_vars(m, "Add System")
-    if cv[:user] and cv[:user]['is_admin']
-      erb :add_system, :locals => cv
+    cv = common_vars(m, 'Add System')
+    if cv[:user] && cv[:user]['is_admin']
+      erb :add_system, locals: cv
     else
       error_page(403, 'Must be logged in as an admin.')
     end
@@ -441,7 +435,7 @@ end
 post '/admin/add-system/' do
   with_mysql do |m|
     cv = common_vars(m)
-    if cv[:user] and cv[:user]['is_admin']
+    if cv[:user] && cv[:user]['is_admin']
       Systems.new(mysql).create(params['name'], params['template'])
       redirect '/'
     else
@@ -452,11 +446,11 @@ end
 
 get '/admin/associate/' do
   with_mysql do |m|
-    cv = common_vars(m, "Associate Systems With Paper")
-    if cv[:user] and cv[:user]['is_admin']
-      cv[:papers] = Papers.new(m).list(:cols => ['id', 'name'])
-      cv[:systems] = Systems.new(m).list(:cols => ['id', 'name'])
-      erb :associate_papers, :locals => cv
+    cv = common_vars(m, 'Associate Systems With Paper')
+    if cv[:user] && cv[:user]['is_admin']
+      cv[:papers] = Papers.new(m).list(cols: %w(id name))
+      cv[:systems] = Systems.new(m).list(cols: %w(id name))
+      erb :associate_papers, locals: cv
     else
       error_page(403, 'Must be logged in as an admin.')
     end
@@ -466,7 +460,7 @@ end
 post '/admin/associate/' do
   with_mysql do |m|
     cv = common_vars(m)
-    if cv[:user] and cv[:user]['is_admin']
+    if cv[:user] && cv[:user]['is_admin']
       paper_id = params['paper_id']
       system_ids = params['system_id']
       SystemPapers.new(m).bulk_create(paper_id, system_ids)
@@ -487,10 +481,10 @@ end
 get '/callback' do
   session_code = request.env['rack.request.query_hash']['code']
   result = RestClient.post('https://github.com/login/oauth/access_token',
-                           {:client_id => CLIENT_ID,
-                            :client_secret => CLIENT_SECRET,
-                            :code => session_code},
-                           :accept => :json)
+                           { client_id: CLIENT_ID,
+                             client_secret: CLIENT_SECRET,
+                             code: session_code },
+                           accept: :json)
   parsed = JSON.parse(result)
   if parsed[:error]
     redirect "/?error_description=#{parsed[:error_description]}&error=#{parsed[:error]}"
@@ -499,9 +493,9 @@ get '/callback' do
   scopes = parsed['scope'].split(',')
   has_user_email_scope = scopes.include? 'user:email'
   user = JSON.parse(RestClient.get('https://api.github.com/user',
-                                   {:params => {:access_token => access_token}}))
+                                   params: { access_token: access_token }))
   emails = JSON.parse(RestClient.get('https://api.github.com/user/emails',
-                                     {:params => {:access_token => access_token}}))
+                                     params: { access_token: access_token }))
 
   with_mysql do |m|
     info, success = Users.new(m).create(access_token, user, emails)
