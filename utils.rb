@@ -10,14 +10,14 @@ UPLOAD_TOKEN_IV = "yz\xF5\xCB\x0E\xB8\xE7\xD5'\x80h\x85Q\xCD)\x18".freeze
 
 # monkey-patch Mysql2::Result to have empty? method to
 # avoid rubocop rewrites breaking things
-class Mysql2::Result
-  def empty?
-    size == 0
+module Mysql2
+  # Mysql2 Result class, need this to avoid bad
+  # rubocop auto-rewrites
+  class Result
+    def empty?
+      size.zero?
+    end
   end
-end
-
-def get_logger
-  Logger.new(STDERR)
 end
 
 def extract_desc(s)
@@ -51,11 +51,12 @@ def decode_token(token)
   decrypted.split(',')
 end
 
+# Base model for MySQL models.
 class PASModel
   def initialize(mysql, table)
     @table = table
     @m = mysql
-    @log = get_logger
+    @log = Logger.new(STDERR)
   end
 
   def run(sql)
@@ -68,17 +69,16 @@ class PASModel
   end
 
   def get(col, val, fields = nil)
-    if val
-      val = escape(val)
-      fields = fields ? fields.join(', ') : '*'
-      sql = "SELECT #{fields} FROM #{@table} WHERE #{col}='#{val}' LIMIT 1"
-      results = run(sql)
-      !results.empty? ? results.first : nil
-    end
+    return nil unless val
+    val = escape(val)
+    fields = fields ? fields.join(', ') : '*'
+    sql = "SELECT #{fields} FROM #{@table} WHERE #{col}='#{val}' LIMIT 1"
+    results = run(sql)
+    !results.empty? ? results.first : nil
   end
 
   def list(opts = nil)
-    opts = opts ? opts : {}
+    opts = {} unless opts
     sort = opts[:sort] ? opts[:sort] : 'id'
     cols = opts[:cols] ? opts[:cols].join(', ') : '*'
     sql = "SELECT #{cols} FROM #{@table}"
