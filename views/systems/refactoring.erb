@@ -1,0 +1,149 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<h2 class="card-title"><%= system['name'] %></h2>
+	<h6 class="card-subtitle text-muted">
+	  Added on <%= system['ts'].strftime("%B %-d, %Y") %> and completed <%= system['completion_count'] %> time<% if system['completion_count'] != 1 %>s<% end %>.
+	  <% if user and has_completed %>
+	  You completed this system on <%= has_completed.strftime("%B %-d, %Y") %>.
+	  <% end %>
+	</h6>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  When you join a new team, one of of the first things you'll figure out
+	  is their preferred coding style. If you're following best practice,
+	  then you've been using a linter like <a href="https://github.com/bbatsov/rubocop">rubocop</a>
+	  or <a href="https://pypi.python.org/pypi/flake8">flake8</a> to keep style
+	  consistent and avoid style arguments (it turns out computers are better at that kind of argument).
+	  Sometimes though, you'll find that coding style shifts for a project, or
+	  that you need to incorporate another code base with inconsistent style.
+	<p>
+	<p class="card-text">
+	  At a certain scale, it's very common for someone to end up fixing style differences by hand,
+	  but for projects that span thousands of files, this can get quite painful.
+	</p>
+	<p class="card-text">
+	  For that matter, linting is just one example of a broader category of problems:
+	  how do we refactor large codebases? Although a common answer is simply not to refactor
+	  at scale, that tends to cause codebases to degrade rapidly over time.
+	  Fortunately, we can do better.
+	</p>
+	<p class="card-text">
+	  Most languages come with libraries to break their source code down into
+	  <a href="https://en.wikipedia.org/wiki/S-expression">S-expressions</a>, which you can
+	  then recombine in new ways and compile into modified source code.
+	  For Ruby, you can take advantage of <a href="https://github.com/seattlerb/ruby_parser">ruby_parser</a>
+	  and <a href="https://github.com/seattlerb/ruby2ruby">ruby2ruby</a> to do just that.
+	</p>
+	<p class="card-text">
+	  As you've probably guessed, the system we're building here will be to rewrite some Ruby
+	  code to make two improvements.
+	</p>
+	<p class="card-text">
+	  For the first, let's say that we add a method "incr" which used to require two parameters,
+	  but we realized mostly people used it to increment by 1, so we added 1 as the default value
+	  for the second parameter, and we want to rewrite all calls to "incr" to only pass a second
+	  value if it is different than the default.
+	</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Input</h6>
+	<pre class="card-pre">def incr(x, i = 1)
+    x + i
+end
+incr(5, 100)
+incr(3, 1)
+incr(10, 1)
+incr(17, 17)
+</pre>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Output</h6>
+	<pre class="card-pre">def incr(x, i = 1)
+    x + i
+end
+incr(5, 100)
+incr(3)
+incr(10)
+incr(17, 17)
+</pre>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  As a second optimization, let's say that we have bunch of Python
+	  programmers on our team who keep writing Python-style "for" loops
+	  instead of learning Ruby's "each" idiom, and that we want to rewrite
+	  them to use "each".	  
+	</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Input</h6>
+	<pre class="card-pre">def count(lst)
+  i = 0
+  for ele in lst
+    i += 1
+  end
+end</pre>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+	<h6 class="card-header">Output</h6>
+	<pre class="card-pre">def count(lst)
+  i = 0
+  lst.each { |ele| i = (i + 1) }
+end
+
+	</pre>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-block">
+	<p class="card-text">
+	  Once you have those two examples working, then you'll be ready to
+	  take on the full system.
+	</p>
+	<p class="card-text">	
+	  <b>This solution is easy to write manually, but you'll learn a lot more if you write the program that solves it!</b>
+	</p>
+      </div>
+    </div>
+  </div>
+
+  <%= submit_fragment %>
+
+  <% if papers.size > 0 %>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card card-no-margin">
+	<h6 class="card-header">Related papers</h6>
+	<%= papers_table %>
+      </div>
+    </div>
+  </div>
+  <% end %>
+</div>
