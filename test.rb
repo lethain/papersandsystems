@@ -93,15 +93,41 @@ class HelloWorldTest < Test::Unit::TestCase
   end
 
   def test_paper_detail
+    slug = 'slug'
+    args = ['Name', 'Link', 'Desc', 'Topic', '2017', slug]
+    p = Papers.new(mysql)
+    p.create(*args)
+
     # view paper detail page
+    get "/papers/#{slug}/"
+    assert last_response.ok?
+    assert_nil last_response.body =~ /You read this paper/
+   
     # login and mark read
+    login_user
+
+    # must have a rating!
+    get "/papers/#{slug}/read/"
+    assert_equal last_response.status, 400
+    get "/papers/#{slug}/read/?rating=0"
+    assert_equal last_response.status, 400
+    get "/papers/#{slug}/read/?rating=6"
+    assert_equal last_response.status, 400    
+    get "/papers/#{slug}/read/?rating=4"
+    assert_equal last_response.status, 302
+
     # view again
+    get "/papers/#{slug}/"
+    assert last_response.ok?
+    assert_not_nil last_response.body =~ /You read this paper/
+
   end
 
   def test_system_detail
     # view system
     # fail submit
     # login
+    login_user
     # fail submit
     # succeed submit
     # view page, should be updated
