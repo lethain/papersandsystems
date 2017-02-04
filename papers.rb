@@ -1,6 +1,5 @@
 # coding: utf-8
 require 'sinatra'
-require 'mongo'
 require 'json'
 require './models/users'
 require './models/papers'

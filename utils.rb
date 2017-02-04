@@ -9,6 +9,16 @@ UPLOAD_TOKEN_KEY = 'ad5b5ecb30391fb29294891f6b5e4cf6685fae26'
 UPLOAD_TOKEN_IV = "yz\xF5\xCB\x0E\xB8\xE7\xD5'\x80h\x85Q\xCD)\x18"
 
 
+# monkey-patch Mysql2::Result to have empty? method to
+# avoid rubocop rewrites breaking things
+class Mysql2::Result
+  def empty?
+     size == 0
+  end
+end
+
+
+
 def get_logger
   Logger.new(STDERR)
 end

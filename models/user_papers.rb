@@ -1,6 +1,5 @@
 require './utils'
 
-
 class UserPapers < PASModel
   def initialize(mysql)
     super(mysql, 'user_papers')
@@ -8,19 +7,19 @@ class UserPapers < PASModel
 
   def create(user_id, paper_id, rating)
     sql = "INSERT INTO #{@table} (user_id, paper_id, rating) VALUES ('#{user_id}', '#{paper_id}', '#{rating}')"
-    self.run(sql)
+    run(sql)
   end
 
   def user_count(user_id)
-    self.count(:where => {:user_id => user_id})
+    count(where: { user_id: user_id })
   end
 
   def rating(pid)
-    pid = self.escape(pid)
-    key = 'AVG(rating)'    
+    pid = escape(pid)
+    key = 'AVG(rating)'
     sql = "SELECT #{key} FROM #{@table} WHERE paper_id='#{pid}'"
-    res = self.run(sql).to_a
-    if res.size > 0 and res[0].has_key?(key)
+    res = run(sql).to_a
+    if !res.empty? && res[0].key?(key)
       res[0][key]
     else
       0
@@ -28,13 +27,13 @@ class UserPapers < PASModel
   end
 
   def mark_read(user_id, papers)
-    return papers if papers.size == 0
-    
-    pids = papers.map { |x| self.escape(x['id']) }
+    return papers if papers.empty?
+
+    pids = papers.map { |x| escape(x['id']) }
     as_str = pids.map { |x| "'#{x}'" }
-    as_str = as_str.join(',')    
+    as_str = as_str.join(',')
     sql = "SELECT paper_id, ts FROM #{@table} WHERE user_id='#{user_id}' AND paper_id IN (#{as_str})"
-    res = self.run(sql)
+    res = run(sql)
     ts = {}
     res.each do |row|
       ts[row['paper_id']] = row['ts']
@@ -48,12 +47,7 @@ class UserPapers < PASModel
   def has_read(user_id, paper_id)
     key = 'ts'
     sql = "SELECT #{key} FROM #{@table} WHERE user_id='#{user_id}' AND paper_id='#{paper_id}'"
-    res = self.run(sql).to_a
-    if res.size > 0 and res[0].has_key?(key)
-      res[0][key]
-    else
-      nil
-    end
+    res = run(sql).to_a
+    res[0][key] if !res.empty? && res[0].key?(key)
   end
-
 end

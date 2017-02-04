@@ -1,45 +1,44 @@
 require 'mysql2'
 require './utils'
 
-
 class Users < PASModel
   def initialize(mysql)
     super(mysql, 'users')
   end
 
   def create(access_token, user, emails)
-    id = self.escape(user['id'])
-    access_token = self.escape(access_token)
-    login = self.escape(user['login'])
-    avatar = self.escape(user['avatar_url'])
+    id = escape(user['id'])
+    access_token = escape(access_token)
+    login = escape(user['login'])
+    avatar = escape(user['avatar_url'])
     email = nil
     emails.each do |x|
-      if x['verified'] and x['primary']
-        email = self.escape(x['email'])
+      if x['verified'] && x['primary']
+        email = escape(x['email'])
         break
       end
     end
 
-    success = email != nil
+    success = !email.nil?
     results = nil
     if success
-      existing = self.get_by_id(id)
+      existing = get_by_id(id)
       if existing
         sql = "UPDATE #{@table} SET access_token='#{access_token}', login='#{login}', avatar='#{avatar}', email='#{email}' WHERE id=#{id}"
-        results = self.run(sql)
+        results = run(sql)
       else
         sql = "INSERT INTO #{@table} (id, access_token, login, avatar, email) VALUES ('#{id}', '#{access_token}', '#{login}', '#{avatar}', '#{email}')"
-        results = self.run(sql)
+        results = run(sql)
       end
     end
-    return results, success
+    [results, success]
   end
 
   def get_by_id(id)
-    self.get('id', id)
+    get('id', id)
   end
 
   def get_by_token(access_token)
-    self.get('access_token', access_token)
+    get('access_token', access_token)
   end
 end
