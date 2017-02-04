@@ -1,0 +1,14 @@
+def incr(a, b = 1)
+  a + b
+end
+a = incr(1, 2)
+b = incr(1, 1)
+c = incr(3)
+d = incr(2, 1)
+e = incr(6)
+def count(lst)
+  i = 0
+  for ele in lst
+    i += 1
+  end
+end
