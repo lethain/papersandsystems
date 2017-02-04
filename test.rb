@@ -7,7 +7,8 @@ require 'rack/test'
 require 'rack/session/dalli'
 require 'nokogiri'
 
-class HelloWorldTest < Test::Unit::TestCase
+# general tests for systems and papers
+class SystemsAndPapersTest < Test::Unit::TestCase
   include Rack::Test::Methods
 
   def initialize(*args)
@@ -24,7 +25,7 @@ class HelloWorldTest < Test::Unit::TestCase
     at = 'test_token'
     emails = [{ 'verified' => true, 'primary' => true, 'email' => 'test@example.org' }]
     user = { 'id' => 1, 'login' => 'test_user', 'avatar_url' => 'fake-url' }
-    info, success = Users.new(m).create(at, user, emails)
+    _info, success = Users.new(m).create(at, user, emails)
     assert_equal true, success
     post '/test-login/'
     assert last_response.ok?
@@ -84,7 +85,7 @@ class HelloWorldTest < Test::Unit::TestCase
     # mark completed
     uid = Users.new(m).list(cols: ['id']).first['id']
     sid = s.list(cols: ['id']).first['id']
-    uss = UserSystems.new(m).create(uid, sid)
+    UserSystems.new(m).create(uid, sid)
 
     get '/'
     assert_equal 200, last_response.status

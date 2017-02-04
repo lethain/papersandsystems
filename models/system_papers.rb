@@ -1,5 +1,6 @@
 require './utils'
 
+# system papers model
 class SystemPapers < PASModel
   def initialize(mysql)
     super(mysql, 'system_papers')

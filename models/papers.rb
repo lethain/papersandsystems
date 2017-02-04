@@ -1,6 +1,7 @@
 require 'mysql2'
 require './utils'
 
+# Papers model
 class Papers < PASModel
   def initialize(mysql)
     super(mysql, 'papers')
