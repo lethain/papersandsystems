@@ -22,8 +22,8 @@ class HelloWorldTest < Test::Unit::TestCase
   def login_user
     m = mysql
     at = 'test_token'
-    emails = [{'verified' => true, 'primary' => true, 'email' => 'test@example.org'}]
-    user = {'id' => 1, 'login' => 'test_user', 'avatar_url' => 'fake-url'}
+    emails = [{ 'verified' => true, 'primary' => true, 'email' => 'test@example.org' }]
+    user = { 'id' => 1, 'login' => 'test_user', 'avatar_url' => 'fake-url' }
     info, success = Users.new(m).create(at, user, emails)
     assert_equal true, success
     post '/test-login/'
@@ -35,7 +35,7 @@ class HelloWorldTest < Test::Unit::TestCase
     get '/'
     assert last_response.ok?
     doc = Nokogiri::HTML(last_response.body)
-    login = doc.css("#login")
+    login = doc.css('#login')
     assert_equal 1, login.size
 
     # login button is gone
@@ -43,7 +43,7 @@ class HelloWorldTest < Test::Unit::TestCase
     get '/'
     assert last_response.ok?
     doc = Nokogiri::HTML(last_response.body)
-    login = doc.css("#login")
+    login = doc.css('#login')
     assert_equal 0, login.size
 
     # logout
@@ -53,7 +53,7 @@ class HelloWorldTest < Test::Unit::TestCase
     get '/'
     assert last_response.ok?
     doc = Nokogiri::HTML(last_response.body)
-    login = doc.css("#login")
+    login = doc.css('#login')
     assert_equal 1, login.size
   end
 
@@ -61,16 +61,16 @@ class HelloWorldTest < Test::Unit::TestCase
     m = mysql
     drop_tables(@tables)
     s = Systems.new(m)
-    args = ['Introduction', 'introduction']
+    args = %w(Introduction introduction)
     (0..2).each do |n|
       get '/'
       assert last_response.ok?
       doc = Nokogiri::HTML(last_response.body)
-      rows = doc.css("tbody tr")
+      rows = doc.css('tbody tr')
       assert_equal n, rows.size
       rows.each do |row|
-        cols = row.css("td").map { |x| x.text }
-        assert_equal ["Introduction", "0 engineers", "New"], cols
+        cols = row.css('td').map(&:text)
+        assert_equal ['Introduction', '0 engineers', 'New'], cols
       end
       s.create(*args)
     end
@@ -82,8 +82,8 @@ class HelloWorldTest < Test::Unit::TestCase
     assert_nil last_response.body =~ /Completed on/
 
     # mark completed
-    uid = Users.new(m).list(:cols => ['id']).first['id']
-    sid = s.list(:cols => ['id']).first['id']
+    uid = Users.new(m).list(cols: ['id']).first['id']
+    sid = s.list(cols: ['id']).first['id']
     uss = UserSystems.new(m).create(uid, sid)
 
     get '/'
@@ -94,16 +94,16 @@ class HelloWorldTest < Test::Unit::TestCase
   def test_papers_list
     drop_tables(@tables)
     p = Papers.new(mysql)
-    slug = "slug"
+    slug = 'slug'
     args = ['Name', 'Link', 'Desc', 'Topic', '2017', slug]
     (0..2).each do |n|
       get '/papers/'
       assert last_response.ok?
       doc = Nokogiri::HTML(last_response.body)
-      rows = doc.css("tbody tr")
+      rows = doc.css('tbody tr')
       assert_equal n, rows.size
       rows.each do |row|
-        cols = row.css("td").map { |x| x.text }
+        cols = row.css('td').map(&:text)
         assert_equal ['Name', '2017', 'Topic', ''], cols
       end
       p.create(*args)
@@ -116,11 +116,11 @@ class HelloWorldTest < Test::Unit::TestCase
     get '/papers/'
     assert last_response.ok?
     doc = Nokogiri::HTML(last_response.body)
-    rows = doc.css("tbody tr")
-    r1_cols = rows[0].css("td").map { |x| x.text }
+    rows = doc.css('tbody tr')
+    r1_cols = rows[0].css('td').map(&:text)
     assert_equal ['Name', '2017', 'Topic', '★★★★', '✓'], r1_cols
 
-    r2_cols = rows[1].css("td").map { |x| x.text }
+    r2_cols = rows[1].css('td').map(&:text)
     assert_equal ['Name', '2017', 'Topic', '', ''], r2_cols
   end
 
@@ -165,7 +165,7 @@ class HelloWorldTest < Test::Unit::TestCase
 
     # create the system
     s = Systems.new(mysql)
-    args = ['Introduction', 'introduction']
+    args = %w(Introduction introduction)
     s.create(*args)
 
     # view system
@@ -200,7 +200,7 @@ class HelloWorldTest < Test::Unit::TestCase
     assert_equal 400, last_response.status
 
     # succeed submit
-    lines = sys_input.split("\n").select { |x| x.strip }
+    lines = sys_input.split("\n").select(&:strip)
     answers = lines.map do |line|
       (line.to_i * 3).to_s
     end
@@ -214,7 +214,6 @@ class HelloWorldTest < Test::Unit::TestCase
     get '/systems/introduction/'
     assert_equal 200, last_response.status
     assert_not_nil last_response.body =~ /You already completed this system on/
-
   end
 
   def test_add_paper
@@ -223,7 +222,6 @@ class HelloWorldTest < Test::Unit::TestCase
     # submit a new paper
   end
 
-
   def test_about
     get '/about/'
     assert last_response.ok?
@@ -231,6 +229,4 @@ class HelloWorldTest < Test::Unit::TestCase
     get '/about/'
     assert last_response.ok?
   end
-
-
 end
