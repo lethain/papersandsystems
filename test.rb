@@ -155,6 +155,7 @@ class HelloWorldTest < Test::Unit::TestCase
     # view system
     get '/systems/introduction/'
     assert_equal 200, last_response.status
+    assert_nil last_response.body =~ /You already completed this system on/
 
     # get input
     get '/systems/introduction/input/'
@@ -183,7 +184,6 @@ class HelloWorldTest < Test::Unit::TestCase
     assert_equal 400, last_response.status
 
     # succeed submit
-    puts sys_input.split("\n")
     lines = sys_input.split("\n").select { |x| x.strip }
     answers = lines.map do |line|
       (line.to_i * 3).to_s
@@ -192,10 +192,13 @@ class HelloWorldTest < Test::Unit::TestCase
     assert_equal 200, last_response.status
 
     post "/systems/introduction/output/?token=#{token}", answers.join("\n")
-    puts "response: #{last_response.body}"
     assert_equal 200, last_response.status
 
     # view page, should be updated
+    get '/systems/introduction/'
+    assert_equal 200, last_response.status
+    assert_not_nil last_response.body =~ /You already completed this system on/
+
   end
 
   def test_add_paper
