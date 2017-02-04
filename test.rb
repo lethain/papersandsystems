@@ -58,9 +58,10 @@ class HelloWorldTest < Test::Unit::TestCase
   end
 
   def test_systems_list
+    m = mysql
     drop_tables(@tables)
-    s = Systems.new(mysql)
-    args = ['System 1', 'system_1']
+    s = Systems.new(m)
+    args = ['Introduction', 'introduction']
     (0..2).each do |n|
       get '/'
       assert last_response.ok?
@@ -69,10 +70,25 @@ class HelloWorldTest < Test::Unit::TestCase
       assert_equal n, rows.size
       rows.each do |row|
         cols = row.css("td").map { |x| x.text }
-        assert_equal ["System 1", "0 engineers", "New"], cols
+        assert_equal ["Introduction", "0 engineers", "New"], cols
       end
       s.create(*args)
     end
+
+    # check that page updates after completion
+    login_user
+    get '/'
+    assert_equal 200, last_response.status
+    assert_nil last_response.body =~ /Completed on/
+
+    # mark completed
+    uid = Users.new(m).list(:cols => ['id']).first['id']
+    sid = s.list(:cols => ['id']).first['id']
+    uss = UserSystems.new(m).create(uid, sid)
+
+    get '/'
+    assert_equal 200, last_response.status
+    assert_not_nil last_response.body =~ /Completed on/
   end
 
   def test_papers_list
