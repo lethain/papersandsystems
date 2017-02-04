@@ -53,7 +53,7 @@ def create_tables
       next if cmd.strip.empty?
       begin
         m.query(cmd + ';')
-      rescue Exception => e
+      rescue StandardError => e
         puts e unless e.to_s.start_with? 'Duplicate key name'
       end
     end
@@ -163,7 +163,6 @@ get '/systems/:id/' do
     if system
       sid = system['id']
       cv = common_vars(m, system['name'])
-      related_papers = []
       cv[:system] = system
       cv[:papers] = SystemPapers.new(m).related_papers(sid)
       if cv[:user]
@@ -187,7 +186,6 @@ get '/systems/:id/input/' do
     s = Systems.new(m)
     system = s.get_by_template_or_id(segment)
     if system
-      sid = system['id']
       fn = "#{system['template']}_input.txt"
       send_file "solutions/#{system['template']}.in", filename: fn
     else
@@ -198,24 +196,23 @@ get '/systems/:id/input/' do
 end
 
 post '/systems/:id/output/' do
-  segment = params[:id]
   token = params[:token]
   if token
     begin
-      uid, ts = decode_token(token.strip)
+      uid, _ts = decode_token(token.strip)
     rescue
       status 403
       return body "Supplied 'token' could not be validated."
     end
     with_mysql do |m|
       s = Systems.new(m)
-      system = s.get_by_template_or_id(segment)
+      system = s.get_by_template_or_id(params[:id])
       sid = system['id']
       solution = File.open("solutions/#{system['template']}.out")
       errors = 0
       lines = 0
       resp = ''
-      for line in request.body
+      request.body.each do |line|
         sol_line = solution.gets
         lines += 1
         if line.strip == sol_line.strip
@@ -225,10 +222,9 @@ post '/systems/:id/output/' do
           errors += 1
         end
       end
-      if errors > 0 || (lines == 0)
+      if errors > 0 || lines.zero?
         resp += "\nSorry, that doesn't look quite right. We found #{errors} errors.\n"
         status 400
-        body resp
       else
         resp += "\nExcellent, that looks correct!\n"
         uss = UserSystems.new(m)
@@ -243,8 +239,8 @@ post '/systems/:id/output/' do
           resp += "This is your first time solving this problem, congrats.\n"
         end
         status 200
-        body resp
       end
+      body resp
     end
   else
     status 403
@@ -273,11 +269,7 @@ get '/papers/:id/' do
       pid = paper['id']
       cv = common_vars(m, paper['name'])
       cv[:paper] = paper
-      if cv[:user]
-        cv[:has_read] = UserPapers.new(m).read?(cv[:user]['id'], pid)
-      else
-        cv[:has_read] = nil
-      end
+      cv[:has_read] = cv[:user] && UserPapers.new(m).read?(cv[:user]['id'], pid)
       cv[:og_description] = extract_desc(paper['description'])
       cv[:systems] = SystemPapers.new(m).related_systems(pid)
       cv[:systems_table] = erb(:table_systems, locals: cv, layout: nil)
@@ -294,7 +286,6 @@ get '/papers/:id/edit/' do
   with_mysql do |m|
     p = Papers.new(m)
     paper = segment.length == 36 ? p.get('id', segment) : p.get('slug', segment)
-    pid = paper['id']
     cv = common_vars(m, 'Edit Paper')
     if cv[:user] && cv[:user]['is_admin']
       cv[:paper] = paper
@@ -489,15 +480,12 @@ get '/callback' do
     redirect "/?error_description=#{parsed[:error_description]}&error=#{parsed[:error]}"
   end
   access_token = parsed['access_token']
-  scopes = parsed['scope'].split(',')
-  has_user_email_scope = scopes.include? 'user:email'
   user = JSON.parse(RestClient.get('https://api.github.com/user',
                                    params: { access_token: access_token }))
   emails = JSON.parse(RestClient.get('https://api.github.com/user/emails',
                                      params: { access_token: access_token }))
-
   with_mysql do |m|
-    info, success = Users.new(m).create(access_token, user, emails)
+    _info, success = Users.new(m).create(access_token, user, emails)
     if success
       session[:access_token] = parsed['access_token']
       redirect '/'
