@@ -27,7 +27,7 @@ configure do
   use Rack::Session::Dalli, cache: Dalli::Client.new(MEMCACHE_HOSTS)
 end
 
-def get_markdown
+def markdown_renderer
   Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
 end
 
@@ -281,7 +281,7 @@ get '/papers/:id/' do
       cv[:og_description] = extract_desc(paper['description'])
       cv[:systems] = SystemPapers.new(m).related_systems(pid)
       cv[:systems_table] = erb(:table_systems, locals: cv, layout: nil)
-      cv[:rendered] = get_markdown.render(paper['description'])
+      cv[:rendered] = markdown_renderer.render(paper['description'])
       erb :paper, locals: cv
     else
       error_page(404, 'No such paper found.')
