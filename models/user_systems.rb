@@ -32,7 +32,7 @@ class UserSystems < PASModel
     systems
   end
 
-  def has_completed(user_id, system_id)
+  def completed?(user_id, system_id)
     key = 'ts'
     sql = "SELECT #{key} FROM #{@table} WHERE user_id='#{user_id}' AND system_id='#{system_id}'"
     res = run(sql).to_a

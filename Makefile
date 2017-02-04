@@ -37,9 +37,8 @@ mysql:
 memcached:
 	/usr/local/opt/memcached/bin/memcached
 
-mongo:
-	mongod --config /usr/local/etc/mongod.conf
-
+rubocop:
+	rubocop
 
 fmt:
 	prettier --write 'public/static/*.js'

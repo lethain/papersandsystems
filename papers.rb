@@ -170,7 +170,7 @@ get '/systems/:id/' do
         uid = cv[:user]['id']
         cv[:upload_token] = upload_token(uid)
         cv[:papers] = UserPapers.new(m).mark_read(uid, cv[:papers])
-        cv[:has_completed] = UserSystems.new(m).has_completed(uid, sid)
+        cv[:has_completed] = UserSystems.new(m).completed?(uid, sid)
       end
       cv[:papers_table] = erb(:table_papers, locals: cv, layout: nil)
       cv[:submit_fragment] = erb(:submit_system, locals: cv, layout: nil)
@@ -232,7 +232,7 @@ post '/systems/:id/output/' do
       else
         resp += "\nExcellent, that looks correct!\n"
         uss = UserSystems.new(m)
-        already_solved = uss.has_completed(uid, sid)
+        already_solved = uss.completed?(uid, sid)
         if already_solved
           resp += "You've already solved this problem.\n"
         else
@@ -274,7 +274,7 @@ get '/papers/:id/' do
       cv = common_vars(m, paper['name'])
       cv[:paper] = paper
       if cv[:user]
-        cv[:has_read] = UserPapers.new(m).has_read(cv[:user]['id'], pid)
+        cv[:has_read] = UserPapers.new(m).read?(cv[:user]['id'], pid)
       else
         cv[:has_read] = nil
       end

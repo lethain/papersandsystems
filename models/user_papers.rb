@@ -44,7 +44,7 @@ class UserPapers < PASModel
     papers
   end
 
-  def has_read(user_id, paper_id)
+  def read?(user_id, paper_id)
     key = 'ts'
     sql = "SELECT #{key} FROM #{@table} WHERE user_id='#{user_id}' AND paper_id='#{paper_id}'"
     res = run(sql).to_a
