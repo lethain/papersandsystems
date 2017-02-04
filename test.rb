@@ -139,12 +139,62 @@ class HelloWorldTest < Test::Unit::TestCase
   end
 
   def test_system_detail
+    drop_tables(@tables)
+
+    # view non-existant system
+    get '/systems/introduction/'
+    assert_equal 404, last_response.status
+    get '/systems/introduction/input/'
+    assert_equal 404, last_response.status
+
+    # create the system
+    s = Systems.new(mysql)
+    args = ['Introduction', 'introduction']
+    s.create(*args)
+
     # view system
-    # fail submit
-    # login
+    get '/systems/introduction/'
+    assert_equal 200, last_response.status
+
+    # get input
+    get '/systems/introduction/input/'
+    assert_equal 200, last_response.status
+    sys_input = last_response.body
+
+    # submit output, logged out
+    post '/systems/introduction/output/', "2\3\4"
+    assert_equal 403, last_response.status
+
+    post '/systems/introduction/output/?token=123', "2\3\4"
+    assert_equal 403, last_response.status
+
+    # login & get access token
     login_user
-    # fail submit
+    get '/systems/introduction/'
+    assert_equal 200, last_response.status
+    token = last_response.body.scan(/var token = "(.*)"\n/).first.first
+
+    # fail submit with wrong answer
+    post "/systems/introduction/output/?token=#{token}", '2\n3\n4'
+    assert_equal 400, last_response.status
+
+    # fail submit with empty answer
+    post "/systems/introduction/output/?token=#{token}", ''
+    assert_equal 400, last_response.status
+
     # succeed submit
+    puts sys_input.split("\n")
+    lines = sys_input.split("\n").select { |x| x.strip }
+    answers = lines.map do |line|
+      (line.to_i * 3).to_s
+    end
+    post "/systems/introduction/output/?token=#{token}", answers.join("\n") + "\n"
+    assert_equal 200, last_response.status
+
+    post "/systems/introduction/output/?token=#{token}", answers.join("\n")
+    puts "response: #{last_response.body}"
+    assert_equal 200, last_response.status
+
     # view page, should be updated
   end
 

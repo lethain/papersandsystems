@@ -222,7 +222,7 @@ post '/systems/:id/output/' do
       for line in request.body
         sol_line = solution.gets
         lines += 1
-        if line == sol_line
+        if line.strip == sol_line.strip
           resp += "✓ #{line}"
         else
           resp += "✗ #{line}"
