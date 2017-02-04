@@ -10,4 +10,3 @@ gem 'rest-client'
 gem 'sinatra'
 gem 'test-unit'
 gem 'unicorn'
-
