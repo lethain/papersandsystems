@@ -259,7 +259,7 @@ end
 get '/papers/' do
   with_mysql do |m|
     cv = common_vars(m, "Papers")
-    papers = Papers.new(m).list(:sort => 'pos', :cols => ['pos', 'id', 'slug', 'name', 'read_count', 'topic', 'rating', 'year'])
+    papers = Papers.new(m).list(:sort => '-rating', :cols => ['pos', 'id', 'slug', 'name', 'read_count', 'topic', 'rating', 'year'])
     if cv[:user]
       papers = UserPapers.new(m).mark_read(cv[:user]['id'], papers)
     end

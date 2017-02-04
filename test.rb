@@ -1,3 +1,4 @@
+# coding: utf-8
 ENV['RACK_ENV'] = 'test'
 
 require './papers'
@@ -77,7 +78,8 @@ class HelloWorldTest < Test::Unit::TestCase
   def test_papers_list
     drop_tables(@tables)
     p = Papers.new(mysql)
-    args = ['Name', 'Link', 'Desc', 'Topic', '2017', 'Slug']
+    slug = "slug"
+    args = ['Name', 'Link', 'Desc', 'Topic', '2017', slug]
     (0..2).each do |n|
       get '/papers/'
       assert last_response.ok?
@@ -90,6 +92,20 @@ class HelloWorldTest < Test::Unit::TestCase
       end
       p.create(*args)
     end
+
+    # login and mark read
+    login_user
+    get "/papers/#{slug}/read/?rating=4"
+    assert_equal 302, last_response.status
+    get '/papers/'
+    assert last_response.ok?
+    doc = Nokogiri::HTML(last_response.body)
+    rows = doc.css("tbody tr")
+    r1_cols = rows[0].css("td").map { |x| x.text }
+    assert_equal ['Name', '2017', 'Topic', '★★★★', '✓'], r1_cols
+
+    r2_cols = rows[1].css("td").map { |x| x.text }
+    assert_equal ['Name', '2017', 'Topic', '', ''], r2_cols
   end
 
   def test_paper_detail
@@ -102,7 +118,7 @@ class HelloWorldTest < Test::Unit::TestCase
     get "/papers/#{slug}/"
     assert last_response.ok?
     assert_nil last_response.body =~ /You read this paper/
-   
+
     # login and mark read
     login_user
 
@@ -112,7 +128,7 @@ class HelloWorldTest < Test::Unit::TestCase
     get "/papers/#{slug}/read/?rating=0"
     assert_equal last_response.status, 400
     get "/papers/#{slug}/read/?rating=6"
-    assert_equal last_response.status, 400    
+    assert_equal last_response.status, 400
     get "/papers/#{slug}/read/?rating=4"
     assert_equal last_response.status, 302
 
@@ -120,7 +136,6 @@ class HelloWorldTest < Test::Unit::TestCase
     get "/papers/#{slug}/"
     assert last_response.ok?
     assert_not_nil last_response.body =~ /You read this paper/
-
   end
 
   def test_system_detail
