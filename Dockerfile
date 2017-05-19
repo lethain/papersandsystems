@@ -8,8 +8,8 @@ RUN apt-get install libmysqlclient-dev -y
 RUN mkdir /var/papers/
 COPY . /var/papers/
 
-RUN touch /var/log/papers/log
-ENTRYPOINT tail -f /var/log/papers/log
+
+ENTRYPOINT tail -f /var/papers/Dockerfile
 
 # ENTRYPOINT cron && nginx -g "daemon off;"
 # EXPOSE 80
