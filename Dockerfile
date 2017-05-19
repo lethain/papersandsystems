@@ -1,10 +1,12 @@
 FROM ubuntu:zesty
 
 RUN apt-get update
-RUN apt-get install curl
-RUN apt-get install ruby-full
-RUN apt-get install libmysqlclient-dev
+RUN apt-get install curl -y
+RUN apt-get install ruby-full -y
+RUN apt-get install libmysqlclient-dev -y
 
+RUN mkdir /var/papers/
+COPY . /var/papers/
 
 RUN touch /var/log/papers/log
 ENTRYPOINT tail -f /var/log/papers/log
