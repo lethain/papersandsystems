@@ -9,7 +9,7 @@ pid '/home/papers/unicorn.pid'
 #stdout_path '/var/papers/papers_unicorn.err'
 
 # Unicorn socket
-listen '127.0.0.1:9292'
+listen '0.0.0.0:9292'
 
 # Number of processes
 worker_processes 4
