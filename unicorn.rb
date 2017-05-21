@@ -1,12 +1,12 @@
 # Set the working application directory
-working_directory '/home/papers/papersandsystems'
+working_directory '/var/papers'
 
 # Unicorn PID file location
 pid '/home/papers/unicorn.pid'
 
 # Path to logs
-stderr_path '/home/papers/papers_unicorn.out'
-stdout_path '/home/papers/papers_unicorn.err'
+#stderr_path '/var/papers/papers_unicorn.out'
+#stdout_path '/var/papers/papers_unicorn.err'
 
 # Unicorn socket
 listen '127.0.0.1:9292'

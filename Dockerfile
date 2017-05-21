@@ -15,8 +15,6 @@ COPY . /var/papers/
 WORKDIR /var/papers/
 RUN bundle install
 
-#ENTRYPOINT bundler exec unicorn -c unicorn.rb
-ENTRYPOINT tail -f unicorn.rb
-
-# ENTRYPOINT cron && nginx -g "daemon off;"
-# EXPOSE 80
+ENTRYPOINT bundler exec unicorn -c unicorn.rb
+#ENTRYPOINT tail -f unicorn.rb
+EXPOSE 9292
