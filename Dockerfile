@@ -9,6 +9,8 @@ RUN apt-get install ruby-dev -y
 RUN apt-get install build-essential -y
 RUN gem install bundler
 
+RUN mkdir /home/papers/
+RUN chmod 644 /home/papers/
 RUN mkdir /var/papers/
 COPY . /var/papers/
 
