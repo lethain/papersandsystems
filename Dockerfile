@@ -6,6 +6,7 @@ RUN apt-get install ruby-full -y
 RUN apt-get install libmysqlclient-dev -y
 RUN apt-get install mysql-client -y
 RUN apt-get install ruby-dev -y
+RUN apt-get install build-essential -y
 RUN gem install bundler
 
 RUN mkdir /var/papers/
